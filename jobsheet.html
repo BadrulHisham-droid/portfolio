@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home — DFD40143 Jobsheet Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="cursor.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jobsheet — DFD40143 Jobsheet Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBF7F1; --ink:#453D57;
+    --coral:#FFC1B3; --sun:#FFE9AE; --mint:#BFE9DA; --sky:#B9E4EA; --grape:#DCCFF2;
+    --shadow: rgba(69,61,87,.18);
+    --shadow-strong: rgba(69,61,87,.28);
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; min-height:100%; color:var(--ink); font-family:'Nunito', sans-serif; }
+  body{
+    display:flex; flex-direction:column; min-height:100vh; position:relative; overflow-x:hidden;
+    background:linear-gradient(120deg, #FBF7F1, #FDF1EE, #F1F7F4, #FBF7F1);
+    background-size:300% 300%; animation:gradientShift 24s ease infinite;
+  }
+  @keyframes gradientShift{ 0%{background-position:0% 50%;} 50%{background-position:100% 50%;} 100%{background-position:0% 50%;} }
+
+  .blob{ position:fixed; border-radius:50%; filter:blur(6px); opacity:.4; pointer-events:none; z-index:0; animation:bob 10s ease-in-out infinite; }
+  .blob.b1{ width:300px; height:300px; background:var(--coral); top:-100px; left:35%; }
+  .dots{ position:fixed; inset:0; z-index:0; pointer-events:none; background-image:radial-gradient(var(--ink) 1px, transparent 1px); background-size:26px 26px; opacity:.035; }
+  @keyframes bob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-18px); } }
+
+  .site-nav{
+    position:sticky; top:0; left:0; right:0; z-index:20; display:flex; align-items:center; justify-content:space-between;
+    padding:16px 26px; background:rgba(251,247,241,.75); backdrop-filter:blur(8px); border-bottom:2px solid rgba(69,61,87,.12);
+  }
+  .home-btn{
+    display:inline-flex; align-items:center; gap:8px; text-decoration:none; color:var(--ink);
+    font-family:'Baloo 2', sans-serif; font-weight:700; font-size:16px;
+    background:var(--sun); border:2px solid rgba(69,61,87,.25); border-radius:999px; padding:8px 16px 8px 12px;
+    box-shadow:0 4px 14px var(--shadow); transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .home-btn:hover{ transform:translateY(-3px); box-shadow:0 8px 20px var(--shadow-strong); }
+  .nav-links{ display:flex; gap:10px; font-family:'Baloo 2', sans-serif; font-size:14px; }
+  .nav-links a{ color:var(--ink); text-decoration:none; padding:8px 16px; border-radius:999px; border:2px solid transparent; transition:border-color .2s ease, transform .2s ease, background .2s ease; }
+  .nav-links a:hover{ background:#fff; border-color:rgba(69,61,87,.2); transform:translateY(-2px); }
+  .nav-links a[aria-current="page"]{ background:var(--mint); border-color:rgba(69,61,87,.2); }
+
+  main{ flex:1; position:relative; z-index:2; max-width:920px; margin:0 auto; padding:56px 24px 60px; width:100%; }
+
+  .badge{ display:inline-flex; align-items:center; gap:8px; font-family:'Baloo 2', sans-serif; font-size:13px; background:var(--grape); color:var(--ink); border:2px solid rgba(69,61,87,.2); border-radius:999px; padding:7px 16px; margin-bottom:14px; box-shadow:0 4px 12px var(--shadow); }
+  h1{ font-family:'Baloo 2', sans-serif; font-weight:800; font-size:clamp(28px,5.5vw,44px); margin:0 0 30px; }
+
+  .student-tabs{ display:flex; gap:12px; margin-bottom:22px; flex-wrap:wrap; }
+  .tab-btn{
+    flex:1 1 220px; text-align:left; background:#fff; border:2px solid rgba(69,61,87,.16); border-radius:18px;
+    padding:16px 18px; color:var(--ink); cursor:pointer; font-family:'Nunito', sans-serif;
+    box-shadow:0 6px 16px var(--shadow); transition:transform .2s ease, box-shadow .2s ease, background .2s ease;
+  }
+  .tab-btn:hover{ transform:translateY(-3px); }
+  .tab-btn .name{ font-family:'Baloo 2', sans-serif; font-weight:700; font-size:17px; }
+  .tab-btn .sub{ font-family:'Nunito', sans-serif; font-weight:700; font-size:11.5px; color:#6c6180; margin-top:4px; text-transform:uppercase; letter-spacing:.03em; }
+  .tab-btn.active{ background:var(--sky); box-shadow:0 3px 10px var(--shadow); }
+
+  .overview{
+    display:flex; align-items:center; gap:22px; background:#fff; border:2px solid rgba(69,61,87,.14); border-radius:22px;
+    padding:22px; margin-bottom:24px; flex-wrap:wrap; box-shadow:0 8px 20px var(--shadow);
+  }
+  .ring-wrap{ position:relative; width:76px; height:76px; flex-shrink:0; }
+  .ring-wrap svg{ transform:rotate(-90deg); width:76px; height:76px; }
+  .ring-bg{ fill:none; stroke:#F1E9D8; stroke-width:8; }
+  .ring-fg{ fill:none; stroke:var(--coral); stroke-width:8; stroke-linecap:round; transition:stroke-dashoffset .5s ease; }
+  .ring-pct{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:'Baloo 2', sans-serif; font-weight:800; font-size:16px; }
+  .overview-text .who{ font-family:'Baloo 2', sans-serif; font-weight:800; font-size:19px; }
+  .overview-text .count{ font-family:'Nunito', sans-serif; font-weight:700; font-size:12.5px; color:#6c6180; margin-top:4px; }
+
+  .controls{ display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap; align-items:center; }
+  .search-box{
+    flex:1 1 220px; display:flex; align-items:center; gap:8px; background:#fff; border:2px solid rgba(69,61,87,.16);
+    border-radius:999px; padding:10px 16px;
+  }
+  .search-box input{ background:transparent; border:none; outline:none; color:var(--ink); font-family:'Nunito', sans-serif; font-weight:600; font-size:13.5px; width:100%; }
+  .search-box svg{ width:15px; height:15px; color:#6c6180; flex-shrink:0; }
+  .filter-group{ display:flex; gap:6px; font-family:'Baloo 2', sans-serif; font-size:13px; }
+  .filter-btn{
+    background:#fff; border:2px solid rgba(69,61,87,.16); color:var(--ink); border-radius:999px;
+    padding:9px 15px; cursor:pointer; transition:background .2s ease, transform .2s ease;
+  }
+  .filter-btn:hover{ transform:translateY(-2px); }
+  .filter-btn.active{ background:var(--sun); }
+
+  .job-list{ display:grid; gap:12px; }
+  .job-item{
+    background:#fff; border:2px solid rgba(69,61,87,.14); border-radius:20px; padding:14px 16px;
+    box-shadow:0 6px 16px var(--shadow); transition:transform .2s ease, box-shadow .2s ease;
+    opacity:0; transform:translateX(-10px); animation:slideIn .5s ease forwards;
+  }
+  .job-item:hover{ transform:translateY(-3px); box-shadow:0 12px 24px var(--shadow-strong); }
+  @keyframes slideIn{ to{ opacity:1; transform:translateX(0); } }
+  .job-item.done{ background:#EFFAF5; }
+  .job-item.pending{ background:#fff; }
+  .job-row{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+  .job-check{
+    width:26px; height:26px; border-radius:9px; border:2px solid rgba(69,61,87,.3); flex-shrink:0; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; background:#fff; transition:background .2s ease, transform .2s ease;
+    position:relative;
+  }
+  .job-check:hover{ transform:scale(1.1); }
+  .job-check.checked{ background:var(--mint); border-color:rgba(69,61,87,.2); }
+  .job-check svg{ width:14px; height:14px; color:var(--ink); opacity:0; }
+  .job-check.checked svg{ opacity:1; }
+  .job-title{ font-family:'Baloo 2', sans-serif; font-weight:700; font-size:15.5px; flex:1; min-width:120px; }
+  .job-num{ font-family:'JetBrains Mono', monospace; font-size:11.5px; color:#9a8fb0; }
+  .job-status{ font-family:'Nunito', sans-serif; font-weight:800; font-size:10.5px; letter-spacing:.03em; text-transform:uppercase; padding:5px 11px; border-radius:999px; border:2px solid rgba(69,61,87,.16); }
+  .job-status.done{ background:var(--mint); }
+  .job-status.pending{ background:#FFE9E3; }
+
+  .file-row{ display:flex; align-items:center; gap:10px; margin-top:10px; padding-left:40px; flex-wrap:wrap; }
+  .file-chip{
+    display:inline-flex; align-items:center; gap:8px; background:var(--grape); border:2px solid rgba(69,61,87,.16); border-radius:999px;
+    padding:6px 12px; font-family:'Nunito', sans-serif; font-weight:700; font-size:12.5px;
+  }
+  .file-chip .remove{ cursor:pointer; border:none; background:none; font-weight:800; color:#C97C6E; font-size:14px; line-height:1; padding:0 2px; }
+  .add-file-btn{
+    display:inline-flex; align-items:center; gap:6px; cursor:pointer; font-family:'Baloo 2', sans-serif; font-weight:700; font-size:12.5px;
+    background:#fff; border:2px dashed rgba(69,61,87,.3); border-radius:999px; padding:6px 14px; color:var(--ink);
+    transition:background .2s ease, transform .2s ease;
+  }
+  .add-file-btn:hover{ background:var(--sun); transform:translateY(-1px); }
+  .add-file-btn input[type="file"]{ display:none; }
+
+  .empty-msg{ text-align:center; color:#9a8fb0; font-family:'Baloo 2', sans-serif; font-weight:700; font-size:14px; padding:40px 0; }
+  .note{ font-family:'Nunito', sans-serif; font-size:12px; color:#9a8fb0; font-weight:700; margin:18px 2px 0; }
+
+  /* confetti */
+  .confetti-piece{
+    position:fixed; top:0; left:0; width:8px; height:8px; border-radius:2px; pointer-events:none; z-index:50;
+    animation:confettiFall 1.1s ease-out forwards;
+  }
+  @keyframes confettiFall{
+    0%{ transform:translate(0,0) rotate(0deg); opacity:1; }
+    100%{ transform:translate(var(--dx), var(--dy)) rotate(var(--rot)); opacity:0; }
+  }
+
+  footer{ padding:24px 24px 30px; display:flex; justify-content:center; position:relative; z-index:2; }
+  .stamp{ font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--ink); display:flex; align-items:center; gap:10px; background:#fff; border:2px solid rgba(69,61,87,.16); border-radius:999px; padding:9px 18px; box-shadow:0 4px 12px var(--shadow); }
+  .stamp .dot{ width:8px; height:8px; border-radius:50%; background:#6FCBA8; box-shadow:0 0 0 4px rgba(111,203,168,.22); animation:blink 1.8s ease-in-out infinite; }
+  @keyframes blink{ 0%,100%{opacity:1;} 50%{opacity:.35;} }
+
+  @media (max-width:600px){
+    .site-nav{ padding:12px 14px; } .nav-links a{ padding:7px 11px; font-size:12px; }
+    main{ padding:48px 16px 40px; }
+    .overview{ padding:18px; }
+    .file-row{ padding-left:0; }
+  }
+</style>
+</head>
+<body>
+  
+  <div id="cat-cursor"></div>
+  <div class="dots" aria-hidden="true"></div>
+  <div class="blob b1" aria-hidden="true"></div>
+
+  <header class="site-nav">
+    <a href="index.html" class="home-btn" aria-label="Home">🏠 Home</a>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="about.html">About Us</a>
+      <a href="jobsheet.html" aria-current="page">Jobsheet</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="badge">🗂️ Jobsheet Control Centre</div>
+    <h1>Pick a student, tick the work, attach the file! 🎉</h1>
+
+    <div class="student-tabs">
+      <button class="tab-btn active" data-student="sasha">
+        <div class="name">Sasha 🌟</div>
+        <div class="sub">Student 01 · 24 jobsheets</div>
+      </button>
+      <button class="tab-btn" data-student="badrul">
+        <div class="name">Badrul 🌟</div>
+        <div class="sub">Student 02 · 24 jobsheets</div>
+      </button>
+    </div>
+
+    <div class="overview">
+      <div class="ring-wrap">
+        <svg viewBox="0 0 76 76">
+          <circle class="ring-bg" cx="38" cy="38" r="30"></circle>
+          <circle class="ring-fg" id="ringFg" cx="38" cy="38" r="30" stroke-dasharray="188.5" stroke-dashoffset="188.5"></circle>
+        </svg>
+        <div class="ring-pct" id="ringPct">0%</div>
+      </div>
+      <div class="overview-text">
+        <div class="who" id="overviewWho">Sasha</div>
+        <div class="count" id="overviewCount">0 completed · 24 pending</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Search jobsheet…">
+      </div>
+      <div class="filter-group">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="done">✅ Completed</button>
+        <button class="filter-btn" data-filter="pending">⏳ Pending</button>
+      </div>
+    </div>
+
+    <div class="job-list" id="jobList"></div>
+    <div class="empty-msg" id="emptyMsg" style="display:none;">🙈 No jobsheets match your search/filter.</div>
+    <p class="note">📎 Attached files stay while this browser tab is open. Reopening the page later keeps the file name saved, but you'll need to re-attach the file itself to download it again.</p>
+  </main>
+
+  <footer>
+    <div class="stamp">
+      <span class="dot" aria-hidden="true"></span>
+      <span id="clock">--:--:--</span>
+      <span>·</span>
+      <span id="dateline">Loading Malaysia date…</span>
+    </div>
+  </footer>
+
+<script>
+  const TOTAL = 24;
+  const students = {
+    sasha:  { label:'Sasha',  key:'jobsheet_status_sasha',  fileKey:'jobsheet_files_sasha'  },
+    badrul: { label:'Badrul', key:'jobsheet_status_badrul', fileKey:'jobsheet_files_badrul' }
+  };
+  let currentStudent = 'sasha';
+  let currentFilter = 'all';
+  let searchTerm = '';
+  const sessionFileURLs = {};
+
+  function loadStatus(studentKey){
+    try{ const raw = localStorage.getItem(studentKey); if (raw){ const arr = JSON.parse(raw); if (Array.isArray(arr) && arr.length === TOTAL) return arr; } }catch(e){}
+    return new Array(TOTAL).fill(false);
+  }
+  function saveStatus(studentKey, arr){ try{ localStorage.setItem(studentKey, JSON.stringify(arr)); }catch(e){} }
+
+  function loadFiles(fileKey){
+    try{ const raw = localStorage.getItem(fileKey); if (raw){ const arr = JSON.parse(raw); if (Array.isArray(arr) && arr.length === TOTAL) return arr; } }catch(e){}
+    return new Array(TOTAL).fill(null);
+  }
+  function saveFiles(fileKey, arr){ try{ localStorage.setItem(fileKey, JSON.stringify(arr)); }catch(e){} }
+
+  function renderTabs(){
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.student === currentStudent));
+  }
+
+  function renderOverview(statusArr){
+    const done = statusArr.filter(Boolean).length;
+    const pct = Math.round((done / TOTAL) * 100);
+    document.getElementById('overviewWho').textContent = students[currentStudent].label;
+    document.getElementById('overviewCount').textContent = `${done} completed · ${TOTAL - done} pending`;
+    document.getElementById('ringPct').textContent = pct + '%';
+    const circumference = 188.5;
+    document.getElementById('ringFg').style.strokeDashoffset = circumference - (pct / 100) * circumference;
+  }
+
+  function formatSize(bytes){
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+    return (bytes/1024/1024).toFixed(1) + ' MB';
+  }
+
+  // gentle confetti burst near a point — celebrates finishing a jobsheet
+  function burstConfetti(x, y){
+    const colors = ['#FFC1B3', '#FFE9AE', '#BFE9DA', '#B9E4EA', '#DCCFF2'];
+    for (let i = 0; i < 14; i++){
+      const piece = document.createElement('span');
+      piece.className = 'confetti-piece';
+      const angle = Math.random() * Math.PI * 2;
+      const dist = 40 + Math.random() * 60;
+      piece.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+      piece.style.setProperty('--dy', Math.sin(angle) * dist - 20 + 'px');
+      piece.style.setProperty('--rot', (Math.random() * 360) + 'deg');
+      piece.style.left = x + 'px';
+      piece.style.top = y + 'px';
+      piece.style.background = colors[i % colors.length];
+      piece.style.borderRadius = Math.random() > .5 ? '50%' : '2px';
+      document.body.appendChild(piece);
+      piece.addEventListener('animationend', () => piece.remove());
+    }
+  }
+
+  function renderList(){
+    const statusArr = loadStatus(students[currentStudent].key);
+    const filesArr = loadFiles(students[currentStudent].fileKey);
+    renderOverview(statusArr);
+
+    const list = document.getElementById('jobList');
+    list.innerHTML = '';
+    let visibleCount = 0;
+
+    for (let i = 0; i < TOTAL; i++){
+      const num = i + 1;
+      const title = `Jobsheet ${String(num).padStart(2,'0')}`;
+      const isDone = statusArr[i];
+      const fileInfo = filesArr[i];
+
+      if (currentFilter === 'done' && !isDone) continue;
+      if (currentFilter === 'pending' && isDone) continue;
+      if (searchTerm && !title.toLowerCase().includes(searchTerm.toLowerCase())) continue;
+
+      visibleCount++;
+
+      const item = document.createElement('div');
+      item.className = `job-item ${isDone ? 'done' : 'pending'}`;
+      item.style.animationDelay = (visibleCount * 0.03) + 's';
+
+      const sessionKey = `${currentStudent}_${i}`;
+      const hasSessionUrl = !!sessionFileURLs[sessionKey];
+
+      item.innerHTML = `
+        <div class="job-row">
+          <button class="job-check ${isDone ? 'checked' : ''}" data-index="${i}" aria-label="Toggle ${title}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </button>
+          <span class="job-num">${String(num).padStart(2,'0')}</span>
+          <span class="job-title">${title}</span>
+          <span class="job-status ${isDone ? 'done' : 'pending'}">${isDone ? 'Completed' : 'Pending'}</span>
+        </div>
+        <div class="file-row">
+          ${fileInfo ? `
+            <span class="file-chip">
+              📄 ${fileInfo.name} <span style="opacity:.6; font-weight:600;">(${formatSize(fileInfo.size)})</span>
+              ${hasSessionUrl ? `<a href="${sessionFileURLs[sessionKey]}" download="${fileInfo.name}" style="color:var(--ink);">⬇️</a>` : ''}
+              <button class="remove" data-remove="${i}" aria-label="Remove file">✕</button>
+            </span>
+          ` : `
+            <label class="add-file-btn">
+              📎 Add Work File
+              <input type="file" data-attach="${i}">
+            </label>
+          `}
+        </div>
+      `;
+      list.appendChild(item);
+    }
+
+    document.getElementById('emptyMsg').style.display = visibleCount === 0 ? 'block' : 'none';
+
+    list.querySelectorAll('.job-check').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const idx = Number(btn.dataset.index);
+        const arr = loadStatus(students[currentStudent].key);
+        const turningOn = !arr[idx];
+        arr[idx] = turningOn;
+        saveStatus(students[currentStudent].key, arr);
+        if (turningOn){
+          const r = btn.getBoundingClientRect();
+          burstConfetti(r.left + r.width / 2, r.top + r.height / 2);
+        }
+        renderList();
+      });
+    });
+
+    list.querySelectorAll('[data-attach]').forEach(input => {
+      input.addEventListener('change', (e) => {
+        const idx = Number(input.dataset.attach);
+        const file = e.target.files[0];
+        if (!file) return;
+        const arr = loadFiles(students[currentStudent].fileKey);
+        arr[idx] = { name: file.name, size: file.size };
+        saveFiles(students[currentStudent].fileKey, arr);
+        sessionFileURLs[`${currentStudent}_${idx}`] = URL.createObjectURL(file);
+        renderList();
+      });
+    });
+
+    list.querySelectorAll('[data-remove]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = Number(btn.dataset.remove);
+        const arr = loadFiles(students[currentStudent].fileKey);
+        arr[idx] = null;
+        saveFiles(students[currentStudent].fileKey, arr);
+        delete sessionFileURLs[`${currentStudent}_${idx}`];
+        renderList();
+      });
+    });
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => { currentStudent = btn.dataset.student; renderTabs(); renderList(); });
+  });
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentFilter = btn.dataset.filter;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b === btn));
+      renderList();
+    });
+  });
+  document.getElementById('searchInput').addEventListener('input', (e) => { searchTerm = e.target.value; renderList(); });
+
+  renderTabs();
+  renderList();
+
+  const clockEl = document.getElementById('clock');
+  const dateEl = document.getElementById('dateline');
+  const TZ = 'Asia/Kuala_Lumpur';
+  const timeFmt = new Intl.DateTimeFormat('en-MY', { timeZone: TZ, hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false });
+  const dateFmt = new Intl.DateTimeFormat('en-MY', { timeZone: TZ, weekday:'long', day:'2-digit', month:'long', year:'numeric' });
+  function tick(){ const now = new Date(); clockEl.textContent = timeFmt.format(now) + ' MYT'; dateEl.textContent = dateFmt.format(now); }
+  tick(); setInterval(tick, 1000);
+
+</script>
+<script src="script.js"></script>
+</body>
+</html>
