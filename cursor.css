@@ -1,7 +1,8 @@
 * {
   cursor: none !important;
 }
-
+ 
+/* Custom animated cursor element (a div, not the native OS cursor) */
 #cat-cursor {
   position: fixed;
   top: 0;
@@ -17,7 +18,7 @@
   transform: translate(-50%, -50%);
   animation: pawWiggle 0.6s ease-in-out infinite;
 }
-
+ 
 @keyframes pawWiggle {
   0%, 100% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
   50%      { transform: translate(-50%, -50%) rotate(-12deg) scale(1.08); }
