@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About Us — The Cat House Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBF7F1; --ink:#453D57;
+    --coral:#FFC1B3; --sun:#FFE9AE; --mint:#BFE9DA; --sky:#B9E4EA; --grape:#DCCFF2;
+    --cocoa:#8A6A56;
+    --shadow: rgba(69,61,87,.18);
+    --shadow-strong: rgba(69,61,87,.28);
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; min-height:100%; color:var(--ink); font-family:'Nunito', sans-serif; }
+  body{
+    display:flex; flex-direction:column; min-height:100vh; position:relative; overflow-x:hidden;
+    background:linear-gradient(180deg, #E9DCF5 0%, #F3E7EC 30%, #FBF7F1 65%);
+  }
+
+  /* wallpaper: soft dotted pattern like a cozy bedroom wall */
+  .wallpaper{ position:fixed; inset:0; z-index:0; pointer-events:none; background-image:radial-gradient(var(--grape) 2px, transparent 2px); background-size:34px 34px; opacity:.35; }
+  .rug{
+    position:fixed; left:50%; bottom:0; transform:translateX(-50%); width:min(90vw, 620px); height:70px; z-index:0; pointer-events:none;
+    background:linear-gradient(180deg, var(--coral), #FFD9CC); border-radius:50% 50% 0 0 / 100% 100% 0 0; opacity:.55;
+  }
+  .window-deco{ position:fixed; top:70px; right:6%; font-size:52px; z-index:0; pointer-events:none; opacity:.4; }
+  .moon{ position:fixed; top:60px; left:6%; font-size:40px; z-index:0; pointer-events:none; opacity:.5; }
+
+  .site-nav{
+    position:sticky; top:0; left:0; right:0; z-index:20; display:flex; align-items:center; justify-content:space-between;
+    padding:16px 26px; background:rgba(251,247,241,.75); backdrop-filter:blur(8px); border-bottom:2px solid rgba(69,61,87,.12);
+  }
+  .home-btn{
+    display:inline-flex; align-items:center; gap:8px; text-decoration:none; color:var(--ink);
+    font-family:'Baloo 2', sans-serif; font-weight:700; font-size:16px;
+    background:var(--sun); border:2px solid rgba(69,61,87,.25); border-radius:999px; padding:8px 16px 8px 12px;
+    box-shadow:0 4px 14px var(--shadow); transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .home-btn:hover{ transform:translateY(-3px) rotate(-4deg); box-shadow:0 8px 20px var(--shadow-strong); }
+  .nav-links{ display:flex; gap:10px; font-family:'Baloo 2', sans-serif; font-size:14px; }
+  .nav-links a{ color:var(--ink); text-decoration:none; padding:8px 16px; border-radius:999px; border:2px solid transparent; transition:border-color .2s ease, transform .2s ease, background .2s ease; }
+  .nav-links a:hover{ background:#fff; border-color:rgba(69,61,87,.2); transform:translateY(-2px); }
+  .nav-links a[aria-current="page"]{ background:var(--mint); border-color:rgba(69,61,87,.2); }
+  .nav-right{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .auth-hi{ font-family:'Baloo 2', sans-serif; font-weight:700; font-size:13px; color:#6c6180; }
+  .auth-link{
+    font-family:'Baloo 2', sans-serif; font-weight:700; font-size:13px; text-decoration:none; color:var(--ink);
+    background:#fff; border:2px solid rgba(69,61,87,.16); border-radius:999px; padding:7px 14px; cursor:pointer;
+    transition:transform .2s ease, background .2s ease;
+  }
+  .auth-link:hover{ transform:translateY(-2px); }
+  .auth-link-primary{ background:var(--coral); }
+
+  main{ flex:1; position:relative; z-index:2; max-width:920px; margin:0 auto; padding:70px 24px 60px; }
+
+  .pop-in{ opacity:0; transform:translateY(18px) scale(.97); animation:pop .7s cubic-bezier(.2,1.2,.4,1) forwards; }
+  .pop-in.d1{ animation-delay:.05s; } .pop-in.d2{ animation-delay:.15s; } .pop-in.d3{ animation-delay:.28s; }
+  @keyframes pop{ to{ opacity:1; transform:translateY(0) scale(1); } }
+
+  .badge{ display:inline-flex; align-items:center; gap:8px; font-family:'Baloo 2', sans-serif; font-size:13px; background:var(--sky); color:var(--ink); border:2px solid rgba(69,61,87,.2); border-radius:999px; padding:7px 16px; margin-bottom:18px; box-shadow:0 4px 12px var(--shadow); }
+  h1{ font-family:'Baloo 2', sans-serif; font-weight:800; font-size:clamp(30px,5.6vw,48px); line-height:1.1; margin:0 0 18px; max-width:660px; }
+  .lede{ font-size:16.5px; line-height:1.75; color:#5b5169; max-width:660px; margin:0 0 20px; font-weight:600; }
+  .lede strong{ color:var(--ink); font-weight:800; }
+
+  /* two little beds side by side, decorative flavor for the room */
+  .room-strip{ display:flex; gap:16px; margin-bottom:50px; flex-wrap:wrap; }
+  .cat-bed{
+    flex:1 1 200px; height:70px; border-radius:0 0 40px 40px / 0 0 30px 30px; position:relative; overflow:hidden;
+    box-shadow:0 8px 18px var(--shadow);
+  }
+  .cat-bed.a{ background:linear-gradient(180deg, #FFD9CC, #FFC1B3); }
+  .cat-bed.b{ background:linear-gradient(180deg, #CDEFE1, #BFE9DA); }
+  .cat-bed span{ position:absolute; top:8px; left:50%; transform:translateX(-50%); font-size:26px; }
+
+  h2.section-title{ font-family:'Baloo 2', sans-serif; font-weight:800; font-size:24px; margin:0 0 34px; display:flex; align-items:center; gap:8px; }
+
+  /* team cards, hanging from a string with a yarn ball toy above each */
+  .team-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:60px 22px; margin-bottom:60px; }
+  .hang-wrap{ position:relative; padding-top:56px; }
+  .hang-string{
+    position:absolute; top:0; left:50%; width:2px; height:38px; background:rgba(69,61,87,.35); transform-origin:top center;
+    animation:swing 3.4s ease-in-out infinite;
+  }
+  .hang-ball{
+    position:absolute; top:34px; left:50%; transform:translateX(-50%); font-size:30px; transform-origin:top center;
+    animation:swing 3.4s ease-in-out infinite;
+  }
+  @keyframes swing{ 0%,100%{ transform:rotate(-8deg) translateX(-50%); } 50%{ transform:rotate(8deg) translateX(-50%); } }
+  .hang-wrap.b .hang-string, .hang-wrap.b .hang-ball{ animation-delay:.4s; }
+
+  .tilt-wrap{ perspective:900px; }
+  .cat-card{
+    position:relative; overflow:visible; border-radius:26px; padding:30px 26px 24px;
+    box-shadow:0 14px 30px var(--shadow);
+    transform:perspective(900px) rotateX(0) rotateY(0) translateY(0);
+    transition:transform .35s cubic-bezier(.2,.9,.3,1), box-shadow .35s ease;
+  }
+  .cat-card.tilting{ transition:none; }
+  .cat-card:hover{ box-shadow:0 22px 44px var(--shadow-strong); }
+  .cat-card.theme-a{ background:linear-gradient(135deg, #FFF3D6 0%, #FFC79C 55%, #FF9E8A 100%); }
+  .cat-card.theme-b{ background:linear-gradient(135deg, #E4FFF4 0%, #A8E9D0 55%, #7FCBEA 100%); }
+  .cat-glare{
+    position:absolute; inset:0; border-radius:26px; pointer-events:none;
+    background:radial-gradient(circle at var(--gx,50%) var(--gy,50%), rgba(255,255,255,.55), transparent 55%);
+    opacity:0; transition:opacity .3s ease;
+  }
+  .cat-card:hover .cat-glare{ opacity:1; }
+
+  .cat-avatar{ position:relative; width:60px; height:60px; margin:0 auto 16px; z-index:2; }
+  .cat-avatar .ear{ position:absolute; top:-10px; width:0; height:0; border-left:11px solid transparent; border-right:11px solid transparent; border-bottom:18px solid #fff; }
+  .cat-avatar .ear.left{ left:2px; transform:rotate(-18deg); }
+  .cat-avatar .ear.right{ right:2px; transform:rotate(18deg); }
+  .cat-avatar .face{
+    position:relative; z-index:2; width:60px; height:60px; border-radius:50%; background:#fff;
+    display:flex; align-items:center; justify-content:center; font-family:'Baloo 2', sans-serif; font-weight:800;
+    font-size:20px; color:#20402F; box-shadow:0 4px 10px rgba(32,64,47,.15);
+  }
+  .cat-card h3{ position:relative; z-index:2; text-align:center; font-family:'Baloo 2', sans-serif; font-weight:800; font-size:21px; margin:0 0 4px; color:#20402F; }
+  .cat-card .role{ position:relative; z-index:2; text-align:center; font-family:'Nunito', sans-serif; font-weight:700; font-size:11.5px; letter-spacing:.04em; color:#20402F; opacity:.7; text-transform:uppercase; margin-bottom:12px; }
+  .cat-card p{ position:relative; z-index:2; text-align:center; font-size:13.5px; line-height:1.6; color:#20402F; opacity:.85; margin:0 0 18px; font-weight:600; }
+  .cat-card .go-btn{
+    position:relative; z-index:2; display:block; text-align:center; text-decoration:none; font-family:'Baloo 2', sans-serif;
+    font-weight:700; font-size:13px; color:#20402F; background:rgba(255,255,255,.7); border-radius:999px; padding:9px; transition:background .2s ease;
+  }
+  .cat-card .go-btn:hover{ background:#fff; }
+
+  .features{ display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:16px; }
+  .feature{
+    background:#fff; border:2px solid rgba(69,61,87,.12); border-radius:18px; padding:18px 20px;
+    box-shadow:0 6px 16px var(--shadow); transition:transform .25s ease, box-shadow .25s ease;
+  }
+  .feature:hover{ transform:translateY(-5px); box-shadow:0 12px 24px var(--shadow-strong); }
+  .feature h4{ font-family:'Baloo 2', sans-serif; font-size:15.5px; margin:0 0 6px; }
+  .feature p{ font-size:13.5px; line-height:1.6; color:#6c6180; margin:0; font-weight:600; }
+
+  footer{ padding:24px 24px 30px; display:flex; justify-content:center; position:relative; z-index:2; }
+  .stamp{ font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--ink); display:flex; align-items:center; gap:10px; background:#fff; border:2px solid rgba(69,61,87,.16); border-radius:999px; padding:9px 18px; box-shadow:0 4px 12px var(--shadow); }
+  .stamp .dot{ width:8px; height:8px; border-radius:50%; background:#6FCBA8; box-shadow:0 0 0 4px rgba(111,203,168,.22); animation:blink 1.8s ease-in-out infinite; }
+  @keyframes blink{ 0%,100%{opacity:1;} 50%{opacity:.35;} }
+
+  @media (max-width:600px){
+    .site-nav{ padding:12px 14px; } .nav-links a{ padding:7px 11px; font-size:12px; }
+    main{ padding:60px 16px 40px; }
+  }
+
+  /* ===== Cat Portal Core styling: cursor, click FX, loading orbit, auth nav ===== */
+  html{
+    cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30'%3E%3Ctext x='2' y='24' font-size='24'%3E%F0%9F%90%9F%3C/text%3E%3C/svg%3E") 8 16, auto;
+  }
+  a, button, .home-btn, [data-tilt]{
+    cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30'%3E%3Ctext x='2' y='24' font-size='24'%3E%F0%9F%90%9F%3C/text%3E%3C/svg%3E") 8 16, pointer;
+  }
+  .sound-toggle{
+    background:#fff; border:2px solid rgba(69,61,87,.2); border-radius:999px; width:38px; height:38px;
+    display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:15px;
+    box-shadow:0 4px 10px rgba(69,61,87,.16); transition:transform .2s ease; flex-shrink:0;
+  }
+  .sound-toggle:hover{ transform:scale(1.12) rotate(-8deg); }
+  .sound-toggle:active{ transform:scale(.92); }
+  #roamKitten{ filter:drop-shadow(0 4px 6px rgba(69,61,87,.25)); user-select:none; }
+  #roamKitten.pounce{ animation:pounce .35s ease; }
+  @keyframes pounce{ 0%,100%{ transform:scale(1);} 50%{ transform:scale(1.35) rotate(-8deg);} }
+  .scratch-mark{ position:fixed; pointer-events:none; z-index:9999; font-size:20px; animation:scratchFade .9s ease forwards; transform:rotate(var(--rot)); }
+  @keyframes scratchFade{ 0%{ opacity:.9; } 100%{ opacity:0; transform:rotate(var(--rot)) translateY(-10px) scale(1.3); } }
+  .page-enter{
+    position:fixed; inset:0; z-index:999; background:var(--cream, #FBF7F1);
+    display:flex; align-items:center; justify-content:center;
+    animation:pageEnterFade 1.5s ease forwards; pointer-events:none;
+  }
+  @keyframes pageEnterFade{ 0%{ opacity:1; } 78%{ opacity:1; } 100%{ opacity:0; visibility:hidden; } }
+  .loading-orbit{ position:relative; width:170px; height:170px; }
+  .loading-orbit .yarn{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); font-size:32px; z-index:2; }
+  .loading-orbit .cat-orbit{ position:absolute; left:50%; top:50%; width:0; height:0; }
+  .loading-orbit .cat-orbit.black{ animation:orbitSpin 1.15s linear infinite; }
+  .loading-orbit .cat-orbit.orange{ animation:orbitSpin 1.4s linear infinite reverse; }
+  .loading-orbit .cat-orbit span{ position:absolute; left:74px; top:-15px; font-size:26px; display:inline-block; }
+  @keyframes orbitSpin{ from{ transform:rotate(0deg);} to{ transform:rotate(360deg);} }
+  .paw-ring{ position:absolute; left:50%; top:50%; width:0; height:0; }
+  .paw-ring span{ position:absolute; font-size:14px; opacity:0; animation:pawAppear 1.5s ease forwards infinite; }
+  @keyframes pawAppear{ 0%,92%{ opacity:0; } 4%,88%{ opacity:.55; } 100%{ opacity:0; } }
+  @media (prefers-reduced-motion: reduce){
+    #roamKitten, .page-enter, .loading-orbit .cat-orbit, .paw-ring span, .hang-string, .hang-ball{ animation:none !important; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="page-enter" id="pageEnter">
+    <div class="loading-orbit">
+      <div class="cat-orbit black"><span>🐈‍⬛</span></div>
+      <div class="cat-orbit orange"><span>🐈</span></div>
+      <div class="yarn">🧶</div>
+    </div>
+  </div>
+
+  <div class="wallpaper" aria-hidden="true"></div>
+  <div class="moon" aria-hidden="true">🌙</div>
+  <div class="window-deco" aria-hidden="true">🪟</div>
+  <div class="rug" aria-hidden="true"></div>
+
+  <header class="site-nav">
+    <a href="index.html" class="home-btn" aria-label="Home">🐾 Home</a>
+    <div class="nav-right">
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="about.html" aria-current="page">About Us</a>
+        <a href="jobsheet.html">Jobsheet</a>
+      </nav>
+      <button class="sound-toggle" id="soundToggle" type="button" aria-label="Toggle sound">🔊</button>
+      <span class="nav-right" id="authNavSlot" style="gap:8px;"></span>
+    </div>
+  </header>
+
+  <main>
+    <div class="badge pop-in d1">🛏️ The Cats' Bedroom</div>
+    <h1 class="pop-in d2">Welcome to where Sasha &amp; Badrul actually sleep on the job.</h1>
+    <p class="lede pop-in d3">
+      This cozy room is where you'll meet the two humans behind the <strong>Mobile Application Development
+      (DFD40143)</strong> coursework portal — and yes, there are toys hanging around, because it's a cat's
+      bedroom after all.
+    </p>
+
+    <div class="room-strip pop-in d3">
+      <div class="cat-bed a"><span>🐈</span></div>
+      <div class="cat-bed b"><span>🐈‍⬛</span></div>
+    </div>
+
+    <h2 class="section-title">🧶 Meet the Team</h2>
+    <div class="team-grid">
+      <div class="hang-wrap">
+        <div class="hang-string" aria-hidden="true"></div>
+        <div class="hang-ball" aria-hidden="true">🧶</div>
+        <div class="tilt-wrap pop-in d1">
+          <div class="cat-card theme-a" data-tilt>
+            <div class="cat-glare" aria-hidden="true"></div>
+            <div class="cat-avatar">
+              <div class="ear left"></div>
+              <div class="ear right"></div>
+              <div class="face">S</div>
+            </div>
+            <h3>Sasha</h3>
+            <div class="role">🐈‍⬛ The Black Cat · Student 01</div>
+            <p>Mobile Application Development student, working on this jobsheet portal as part of the group submission.</p>
+            <a href="jobsheet.html" class="go-btn">See Sasha Race →</a>
+          </div>
+        </div>
+      </div>
+      <div class="hang-wrap b">
+        <div class="hang-string" aria-hidden="true"></div>
+        <div class="hang-ball" aria-hidden="true">🧶</div>
+        <div class="tilt-wrap pop-in d2">
+          <div class="cat-card theme-b" data-tilt>
+            <div class="cat-glare" aria-hidden="true"></div>
+            <div class="cat-avatar">
+              <div class="ear left"></div>
+              <div class="ear right"></div>
+              <div class="face">B</div>
+            </div>
+            <h3>Badrul</h3>
+            <div class="role">🐈 The Orange Cat · Student 02</div>
+            <p>Mobile Application Development student, working on this jobsheet portal as part of the group submission.</p>
+            <a href="jobsheet.html" class="go-btn">See Badrul Race →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title">⚡ What this site does</h2>
+    <div class="features">
+      <div class="feature">
+        <h4>🐾 Separate progress per student</h4>
+        <p>Sasha and Badrul each track their own 24 jobsheets and race independently in the Playroom.</p>
+      </div>
+      <div class="feature">
+        <h4>🔒 Login-secured submissions</h4>
+        <p>Uploading a jobsheet needs you to log in first, so nothing goes missing before the lecturer checks it.</p>
+      </div>
+      <div class="feature">
+        <h4>📚 Admin-curated Library</h4>
+        <p>The admin reviews submissions and publishes the latest ones to the Library for anyone to browse.</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="stamp">
+      <span class="dot" aria-hidden="true"></span>
+      <span id="clock">--:--:--</span>
+      <span>·</span>
+      <span id="dateline">Loading Malaysia date…</span>
+    </div>
+  </footer>
+
+<script>
+  document.querySelectorAll('[data-tilt]').forEach(card => {
+    const maxTilt = 12;
+    card.addEventListener('mouseenter', () => { if (window.catPlayPurr) window.catPlayPurr(); });
+    card.addEventListener('mousemove', (e) => {
+      const r = card.getBoundingClientRect();
+      const x = e.clientX - r.left, y = e.clientY - r.top;
+      const rotateY = ((x - r.width / 2) / (r.width / 2)) * maxTilt;
+      const rotateX = -((y - r.height / 2) / (r.height / 2)) * maxTilt;
+      card.classList.add('tilting');
+      card.style.transform = `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-6px)`;
+      card.style.setProperty('--gx', (x / r.width * 100) + '%');
+      card.style.setProperty('--gy', (y / r.height * 100) + '%');
+    });
+    card.addEventListener('mouseleave', () => {
+      card.classList.remove('tilting');
+      card.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg) translateY(0)';
+    });
+  });
+
+  const clockEl = document.getElementById('clock');
+  const dateEl = document.getElementById('dateline');
+  const TZ = 'Asia/Kuala_Lumpur';
+  const timeFmt = new Intl.DateTimeFormat('en-MY', { timeZone: TZ, hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false });
+  const dateFmt = new Intl.DateTimeFormat('en-MY', { timeZone: TZ, weekday:'long', day:'2-digit', month:'long', year:'numeric' });
+  function tick(){ const now = new Date(); clockEl.textContent = timeFmt.format(now) + ' MYT'; dateEl.textContent = dateFmt.format(now); }
+  tick(); setInterval(tick, 1000);
+</script>
+
+<script>
+  // ===================================================================
+  // Cat Portal Core — shared auth, data, sound, cursor & loading system
+  // Runs on every page. Data lives in this browser's localStorage only.
+  // ===================================================================
+  (function(){
+    const TOTAL_JOBS = 24;
+
+    function seed(){
+      if (!localStorage.getItem('users')){
+        localStorage.setItem('users', JSON.stringify({
+          sasha:  { password:'sasha',  role:'student', name:'Sasha'  },
+          badrul: { password:'badrul', role:'student', name:'Badrul' },
+          admin:  { password:'admin123', role:'admin', name:'Admin' }
+        }));
+      }
+      if (!localStorage.getItem('pendingRequests')) localStorage.setItem('pendingRequests', '[]');
+      if (!localStorage.getItem('libraryEntries')) localStorage.setItem('libraryEntries', '[]');
+      ['sasha','badrul'].forEach(u => {
+        if (!localStorage.getItem('jobsheet_status_' + u)) localStorage.setItem('jobsheet_status_' + u, JSON.stringify(new Array(TOTAL_JOBS).fill(false)));
+        if (!localStorage.getItem('jobsheet_submissions_' + u)) localStorage.setItem('jobsheet_submissions_' + u, JSON.stringify(new Array(TOTAL_JOBS).fill(null).map(() => ({ pdf:null, html:null, code:null, dueDate:null }))));
+      });
+    }
+    seed();
+
+        const u = JSON.parse(localStorage.getItem('users') || 'null');
+    if (u && u.admin) { u.admin.name = 'Mohd Shukri Bin Muhamad Husin'; localStorage.setItem('users', JSON.stringify(u)); }
+
+    window.CatData = {
+      TOTAL_JOBS,
+      getUsers(){ return JSON.parse(localStorage.getItem('users') || '{}'); },
+      saveUsers(u){ localStorage.setItem('users', JSON.stringify(u)); },
+      getPending(){ return JSON.parse(localStorage.getItem('pendingRequests') || '[]'); },
+      savePending(p){ localStorage.setItem('pendingRequests', JSON.stringify(p)); },
+      getLibrary(){ return JSON.parse(localStorage.getItem('libraryEntries') || '[]'); },
+      saveLibrary(l){ localStorage.setItem('libraryEntries', JSON.stringify(l)); },
+      getStatus(u){ return JSON.parse(localStorage.getItem('jobsheet_status_' + u) || 'null') || new Array(TOTAL_JOBS).fill(false); },
+      saveStatus(u, arr){ localStorage.setItem('jobsheet_status_' + u, JSON.stringify(arr)); },
+      getSubs(u){ return JSON.parse(localStorage.getItem('jobsheet_submissions_' + u) || 'null') || new Array(TOTAL_JOBS).fill(null).map(() => ({ pdf:null, html:null, code:null, dueDate:null })); },
+      saveSubs(u, arr){ localStorage.setItem('jobsheet_submissions_' + u, JSON.stringify(arr)); },
+      getSession(){ return localStorage.getItem('loggedInUser'); },
+      setSession(u){ localStorage.setItem('loggedInUser', u); },
+      clearSession(){ localStorage.removeItem('loggedInUser'); }
+    };
+
+    function renderAuthSlot(){
+      const slot = document.getElementById('authNavSlot');
+      if (!slot) return;
+      const uname = CatData.getSession();
+      const users = CatData.getUsers();
+      if (uname && users[uname]){
+        const u = users[uname];
+        slot.innerHTML = `
+          <span class="auth-hi">Hi, ${u.name} 👋</span>
+          <a href="dashboard.html" class="auth-link">Dashboard</a>
+          <button type="button" class="auth-link auth-logout" id="logoutBtn">Log out</button>
+        `;
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) logoutBtn.addEventListener('click', () => {
+          CatData.clearSession();
+          window.location.href = 'index.html';
+        });
+      } else {
+        slot.innerHTML = `
+          <a href="login.html" class="auth-link">Log in</a>
+          <a href="register.html" class="auth-link auth-link-primary">Register</a>
+        `;
+      }
+    }
+    document.addEventListener('DOMContentLoaded', renderAuthSlot);
+
+const SOUND_KEY = 'catSoundEnabled';
+let soundOn = localStorage.getItem(SOUND_KEY) !== 'off';
+
+// single reusable Audio object — avoids overlapping/stacking sounds on rapid clicks
+const meowAudio = new Audio('meow.mp3');
+meowAudio.preload = 'auto';
+
+function playMeowSound(){
+  if (!soundOn) return;
+  meowAudio.currentTime = 0;   // restart from beginning if already playing
+  meowAudio.play().catch(()=>{}); // catch() prevents console errors if browser blocks autoplay
+  setTimeout(() => { meowAudio.pause(); }, 1000);
+}
+
+// keep old function names so nothing else in the code breaks
+function playMeow(){ playMeowSound(); }
+function playMew(){ playMeowSound(); }
+function playScratch(){ playMeowSound(); }
+function playPurr(){ playMeowSound(); }
+function playRandomClickSound(){ playMeowSound(); }
+
+    const clickSounds = [playMeow, playMew, playScratch];
+    function playRandomClickSound(){ if (!soundOn) return; clickSounds[Math.floor(Math.random() * clickSounds.length)](); }
+    window.catPlayMeow = playMeow;
+    window.catPlayMew = playMew;
+    window.catPlayScratch = playScratch;
+    window.catPlayPurr = function(){ if (soundOn) playPurr(); };
+    window.catPlayRandom = playRandomClickSound;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggle = document.getElementById('soundToggle');
+      if (toggle){
+        toggle.textContent = soundOn ? '🔊' : '🔇';
+        toggle.addEventListener('click', () => {
+          soundOn = !soundOn;
+          localStorage.setItem(SOUND_KEY, soundOn ? 'on' : 'off');
+          toggle.textContent = soundOn ? '🔊' : '🔇';
+          if (soundOn) playMew();
+        });
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('input, textarea, .sound-toggle')) return;
+      const mark = document.createElement('span');
+      mark.className = 'scratch-mark';
+      mark.innerHTML = '🐾';
+      mark.style.left = (e.clientX - 14) + 'px';
+      mark.style.top = (e.clientY - 14) + 'px';
+      mark.style.setProperty('--rot', (Math.random() * 40 - 20) + 'deg');
+      document.body.appendChild(mark);
+      setTimeout(() => mark.remove(), 900);
+      playRandomClickSound();
+    });
+
+    const kitten = document.createElement('div');
+    kitten.id = 'roamKitten';
+    kitten.textContent = '🐈';
+    Object.assign(kitten.style, { position:'fixed', fontSize:'26px', zIndex:35, pointerEvents:'none', left:'70vw', top:'82vh' });
+    document.body.appendChild(kitten);
+    let mx = window.innerWidth * 0.7, my = window.innerHeight * 0.82;
+    let kx = mx, ky = my;
+    window.addEventListener('mousemove', (e) => { mx = e.clientX; my = e.clientY; });
+    window.addEventListener('touchmove', (e) => { if (e.touches[0]){ mx = e.touches[0].clientX; my = e.touches[0].clientY; } }, { passive:true });
+    (function loop(){
+      kx += (mx - kx - 46) * 0.045;
+      ky += (my - ky + 46) * 0.045;
+      kitten.style.left = kx + 'px';
+      kitten.style.top = ky + 'px';
+      requestAnimationFrame(loop);
+    })();
+    document.addEventListener('click', () => {
+      kitten.classList.remove('pounce');
+      void kitten.offsetWidth;
+      kitten.classList.add('pounce');
+    });
+
+    const enter = document.getElementById('pageEnter');
+    if (enter){
+      const ring = document.createElement('div');
+      ring.className = 'paw-ring';
+      const steps = 14;
+      for (let i = 0; i < steps; i++){
+        const ang = (i / steps) * 360;
+        const rad = ang * Math.PI / 180;
+        const r = 78;
+        const x = Math.cos(rad) * r, y = Math.sin(rad) * r;
+        const paw = document.createElement('span');
+        paw.textContent = '🐾';
+        paw.style.transform = `translate(${x}px, ${y}px) rotate(${ang + 90}deg)`;
+        paw.style.animationDelay = (i / steps) * 0.9 + 's';
+        ring.appendChild(paw);
+      }
+      enter.appendChild(ring);
+      setTimeout(() => enter.remove(), 1500);
+    }
+  })();
+</script>
+</body>
+</html>

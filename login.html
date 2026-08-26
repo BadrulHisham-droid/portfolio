@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log In — Cat House Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBF7F1; --ink:#453D57;
+    --coral:#FFC1B3; --sun:#FFE9AE; --mint:#BFE9DA; --sky:#B9E4EA; --grape:#DCCFF2;
+    --cocoa:#8A6A56;
+    --shadow: rgba(69,61,87,.18);
+    --shadow-strong: rgba(69,61,87,.28);
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; min-height:100%; color:var(--ink); font-family:'Nunito', sans-serif; }
+  body{
+    display:flex; flex-direction:column; min-height:100vh; position:relative; overflow-x:hidden;
+    background:linear-gradient(120deg, #FBF7F1, #FDF1EE, #F1F7F4, #FBF7F1);
+    background-size:300% 300%; animation:gradientShift 24s ease infinite;
+  }
+  @keyframes gradientShift{ 0%{background-position:0% 50%;} 50%{background-position:100% 50%;} 100%{background-position:0% 50%;} }
+
+  .blob{ position:fixed; border-radius:50%; filter:blur(6px); opacity:.45; pointer-events:none; z-index:0; animation:bob 9s ease-in-out infinite; }
+  .blob.b1{ width:280px; height:280px; background:var(--grape); top:-90px; left:-80px; }
+  .blob.b2{ width:220px; height:220px; background:var(--mint); bottom:-70px; right:-60px; animation-delay:1.2s; }
+  @keyframes bob{ 0%,100%{ transform:translateY(0) rotate(0deg); } 50%{ transform:translateY(-20px) rotate(6deg); } }
+  .dots{ position:fixed; inset:0; z-index:0; pointer-events:none; background-image:radial-gradient(var(--ink) 1px, transparent 1px); background-size:26px 26px; opacity:.035; }
+
+  .site-nav{
+    position:sticky; top:0; left:0; right:0; z-index:20; display:flex; align-items:center; justify-content:space-between;
+    padding:16px 26px; background:rgba(251,247,241,.75); backdrop-filter:blur(8px); border-bottom:2px solid rgba(69,61,87,.12);
+  }
+  .home-btn{
+    display:inline-flex; align-items:center; gap:8px; text-decoration:none; color:var(--ink);
+    font-family:'Baloo 2', sans-serif; font-weight:700; font-size:16px;
+    background:var(--sun); border:2px solid rgba(69,61,87,.25); border-radius:999px; padding:8px 16px 8px 12px;
+    box-shadow:0 4px 14px var(--shadow); transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .home-btn:hover{ transform:translateY(-3px) rotate(-4deg); box-shadow:0 8px 20px var(--shadow-strong); }
+  .nav-links{ display:flex; gap:10px; font-family:'Baloo 2', sans-serif; font-size:14px; }
+  .nav-links a{ color:var(--ink); text-decoration:none; padding:8px 16px; border-radius:999px; border:2px solid transparent; transition:border-color .2s ease, transform .2s ease, background .2s ease; }
+  .nav-links a:hover{ background:#fff; border-color:rgba(69,61,87,.2); transform:translateY(-2px); }
+
+  main{ flex:1; position:relative; z-index:2; display:flex; align-items:center; justify-content:center; padding:60px 20px; }
+
+  .auth-card{
+    background:#fff; border:2px solid rgba(69,61,87,.16); border-radius:26px; padding:36px 32px;
+    box-shadow:0 16px 34px var(--shadow); max-width:400px; width:100%;
+    opacity:0; transform:translateY(16px); animation:pop .6s ease forwards;
+  }
+  @keyframes pop{ to{ opacity:1; transform:translateY(0); } }
+  .auth-card .icon{ font-size:44px; text-align:center; margin-bottom:6px; }
+  .auth-card h1{ font-family:'Baloo 2', sans-serif; font-weight:800; font-size:24px; text-align:center; margin:0 0 6px; }
+  .auth-card .sub{ text-align:center; font-size:13px; color:#6c6180; font-weight:600; margin-bottom:26px; }
+
+  label{ font-family:'Baloo 2', sans-serif; font-weight:700; font-size:13px; display:block; margin:14px 0 6px; }
+  input[type="text"], input[type="email"], input[type="password"]{
+    width:100%; padding:12px 14px; border-radius:14px; border:2px solid rgba(69,61,87,.16);
+    font-family:'Nunito', sans-serif; font-size:14px; font-weight:600; color:var(--ink); outline:none;
+    transition:border-color .2s ease;
+  }
+  input:focus{ border-color:var(--coral); }
+
+  .submit-btn{
+    width:100%; margin-top:22px; background:var(--coral); border:2px solid rgba(69,61,87,.2); border-radius:999px;
+    padding:13px; font-family:'Baloo 2', sans-serif; font-weight:800; font-size:15px; cursor:pointer;
+    box-shadow:0 6px 16px var(--shadow); transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .submit-btn:hover{ transform:translateY(-3px); box-shadow:0 10px 22px var(--shadow-strong); }
+
+  .switch-line{ text-align:center; font-size:13px; font-weight:700; color:#6c6180; margin-top:18px; }
+  .switch-line a{ color:var(--cocoa); }
+
+  .msg{ margin-top:14px; padding:10px 14px; border-radius:12px; font-family:'Nunito', sans-serif; font-weight:700; font-size:13px; display:none; }
+  .msg.error{ background:#FFE3E3; color:#B44B3F; display:block; }
+  .msg.success{ background:#DFF7EC; color:#2E7D5B; display:block; }
+
+  .hint-box{
+    margin-top:18px; background:#FFF8E9; border:2px dashed rgba(69,61,87,.2); border-radius:14px; padding:12px 14px;
+    font-size:12px; color:#6c6180; font-weight:700; line-height:1.6;
+  }
+
+  footer{ padding:20px 24px 26px; display:flex; justify-content:center; position:relative; z-index:2; }
+  .stamp{ font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--ink); display:flex; align-items:center; gap:10px; background:#fff; border:2px solid rgba(69,61,87,.16); border-radius:999px; padding:9px 18px; box-shadow:0 4px 12px var(--shadow); }
+  .stamp .dot{ width:8px; height:8px; border-radius:50%; background:#6FCBA8; box-shadow:0 0 0 4px rgba(111,203,168,.22); animation:blink 1.8s ease-in-out infinite; }
+  @keyframes blink{ 0%,100%{opacity:1;} 50%{opacity:.35;} }
+
+  @media (max-width:600px){ .site-nav{ padding:12px 14px; } .auth-card{ padding:28px 22px; } }
+  /* ===== Cat Portal Core styling: cursor, click FX, loading orbit, auth nav ===== */
+  html{
+    cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30'%3E%3Ctext x='2' y='24' font-size='24'%3E%F0%9F%90%9F%3C/text%3E%3C/svg%3E") 8 16, auto;
+  }
+  a, button, .job-check, .tab-btn, .filter-btn, .add-file-btn, .home-btn, .btn, .module-card, .step-card, [data-tilt], input[type="submit"]{
+    cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30'%3E%3Ctext x='2' y='24' font-size='24'%3E%F0%9F%90%9F%3C/text%3E%3C/svg%3E") 8 16, pointer;
+  }
+
+  .sound-toggle{
+    background:#fff; border:2px solid rgba(69,61,87,.2); border-radius:999px; width:38px; height:38px;
+    display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:15px;
+    box-shadow:0 4px 10px rgba(69,61,87,.16); transition:transform .2s ease; flex-shrink:0;
+  }
+  .sound-toggle:hover{ transform:scale(1.12) rotate(-8deg); }
+  .sound-toggle:active{ transform:scale(.92); }
+
+  .nav-right{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .auth-hi{ font-family:'Baloo 2', sans-serif; font-weight:700; font-size:13px; color:#6c6180; }
+  .auth-link{
+    font-family:'Baloo 2', sans-serif; font-weight:700; font-size:13px; text-decoration:none; color:var(--ink, #453D57);
+    background:#fff; border:2px solid rgba(69,61,87,.16); border-radius:999px; padding:7px 14px; cursor:pointer;
+    transition:transform .2s ease, background .2s ease;
+  }
+  .auth-link:hover{ transform:translateY(-2px); }
+  .auth-link-primary{ background:var(--coral, #FFC1B3); }
+
+  #roamKitten{ filter:drop-shadow(0 4px 6px rgba(69,61,87,.25)); user-select:none; }
+  #roamKitten.pounce{ animation:pounce .35s ease; }
+  @keyframes pounce{ 0%,100%{ transform:scale(1);} 50%{ transform:scale(1.35) rotate(-8deg);} }
+
+  .scratch-mark{
+    position:fixed; pointer-events:none; z-index:9999; font-size:20px;
+    animation:scratchFade .9s ease forwards;
+    transform:rotate(var(--rot));
+  }
+  @keyframes scratchFade{
+    0%{ opacity:.9; filter:none; }
+    100%{ opacity:0; transform:rotate(var(--rot)) translateY(-10px) scale(1.3); }
+  }
+
+  .page-enter{
+    position:fixed; inset:0; z-index:999; background:var(--cream, #FBF7F1);
+    display:flex; align-items:center; justify-content:center;
+    animation:pageEnterFade 1.5s ease forwards; pointer-events:none;
+  }
+  @keyframes pageEnterFade{
+    0%{ opacity:1; } 78%{ opacity:1; } 100%{ opacity:0; visibility:hidden; }
+  }
+  .loading-orbit{ position:relative; width:170px; height:170px; }
+  .loading-orbit .yarn{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); font-size:32px; z-index:2; }
+  .loading-orbit .cat-orbit{ position:absolute; left:50%; top:50%; width:0; height:0; }
+  .loading-orbit .cat-orbit.black{ animation:orbitSpin 1.15s linear infinite; }
+  .loading-orbit .cat-orbit.orange{ animation:orbitSpin 1.4s linear infinite reverse; }
+  .loading-orbit .cat-orbit span{ position:absolute; left:74px; top:-15px; font-size:26px; display:inline-block; }
+  @keyframes orbitSpin{ from{ transform:rotate(0deg);} to{ transform:rotate(360deg);} }
+  .paw-ring{ position:absolute; left:50%; top:50%; width:0; height:0; }
+  .paw-ring span{
+    position:absolute; font-size:14px; opacity:0; animation:pawAppear 1.5s ease forwards infinite;
+  }
+  @keyframes pawAppear{ 0%,92%{ opacity:0; } 4%,88%{ opacity:.55; } 100%{ opacity:0; } }
+
+  @media (prefers-reduced-motion: reduce){
+    #roamKitten, .page-enter, .loading-orbit .cat-orbit, .paw-ring span{ animation:none !important; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="page-enter" id="pageEnter">
+    <div class="loading-orbit">
+      <div class="cat-orbit black"><span>🐈‍⬛</span></div>
+      <div class="cat-orbit orange"><span>🐈</span></div>
+      <div class="yarn">🧶</div>
+    </div>
+  </div>
+
+  <div class="dots" aria-hidden="true"></div>
+  <div class="blob b1" aria-hidden="true"></div>
+  <div class="blob b2" aria-hidden="true"></div>
+
+  <header class="site-nav">
+    <a href="index.html" class="home-btn" aria-label="Home">🐾 Home</a>
+    <div class="nav-right">
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="about.html">About Us</a>
+        <a href="jobsheet.html">Jobsheet</a>
+      </nav>
+      <button class="sound-toggle" id="soundToggle" type="button" aria-label="Toggle sound">🔊</button>
+      <span class="nav-right" id="authNavSlot" style="gap:8px;"></span>
+    </div>
+  </header>
+
+  <main>
+    <div class="auth-card">
+      <div class="icon">🔑</div>
+      <h1>Welcome Back, Cat!</h1>
+      <div class="sub">Log in to reach your food bowl — er, your dashboard.</div>
+
+      <form id="loginForm">
+        <label for="loginEmail">Email</label>
+        <input type="text" id="loginEmail" placeholder="sasha / badrul / admin" autocomplete="username" required>
+        <label for="loginPassword">Password</label>
+        <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" required>
+        <button type="submit" class="submit-btn">🐾 Log In</button>
+      </form>
+      <div class="msg" id="loginMsg"></div>
+
+      <div class="switch-line">New here? <a href="register.html">Register an account →</a></div>
+
+      <div class="hint-box">
+        🧶 Demo accounts — Sasha: <strong>sasha</strong> / <strong>sasha</strong> · Badrul: <strong>badrul</strong> / <strong>badrul</strong><br>
+        Everything is stored in this browser only, so these only work on this device.
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="stamp">
+      <span class="dot" aria-hidden="true"></span>
+      <span id="clock">--:--:--</span>
+      <span>·</span>
+      <span id="dateline">Loading Malaysia date…</span>
+    </div>
+  </footer>
+
+<script>
+  document.getElementById('loginForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+    const pass = document.getElementById('loginPassword').value;
+    const users = CatData.getUsers();
+    const msg = document.getElementById('loginMsg');
+
+    if (users[email] && users[email].password === pass){
+      CatData.setSession(email);
+      msg.className = 'msg success';
+      msg.textContent = `Meow~ welcome back, ${users[email].name}! Redirecting…`;
+      if (window.catPlayMeow) window.catPlayMeow();
+      setTimeout(() => { window.location.href = 'dashboard.html'; }, 700);
+    } else {
+      const pending = CatData.getPending();
+      const stillPending = pending.find(p => p.email === email);
+      msg.className = 'msg error';
+      msg.textContent = stillPending
+        ? '🙀 Your registration is still waiting for admin approval.'
+        : '😿 Wrong email or password. Try again!';
+      if (window.catPlayScratch) window.catPlayScratch();
+    }
+  });
+
+  const clockEl = document.getElementById('clock');
+  const dateEl = document.getElementById('dateline');
+  const TZ = 'Asia/Kuala_Lumpur';
+  const timeFmt = new Intl.DateTimeFormat('en-MY', { timeZone: TZ, hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false });
+  const dateFmt = new Intl.DateTimeFormat('en-MY', { timeZone: TZ, weekday:'long', day:'2-digit', month:'long', year:'numeric' });
+  function tick(){ const now = new Date(); clockEl.textContent = timeFmt.format(now) + ' MYT'; dateEl.textContent = dateFmt.format(now); }
+  tick(); setInterval(tick, 1000);
+</script>
+<script>
+  // ===================================================================
+  // Cat Portal Core — shared auth, data, sound, cursor & loading system
+  // Runs on every page. Data lives in this browser's localStorage only.
+  // ===================================================================
+  (function(){
+    const TOTAL_JOBS = 24;
+
+    // ---------- seed data (first run only) ----------
+    function seed(){
+      if (!localStorage.getItem('users')){
+        localStorage.setItem('users', JSON.stringify({
+          sasha:  { password:'sasha',  role:'student', name:'Sasha'  },
+          badrul: { password:'badrul', role:'student', name:'Badrul' },
+          admin:  { password:'admin123', role:'admin', name:'Mohd Shukri Bin Muhamad Husin' }
+        }));
+      }
+      if (!localStorage.getItem('pendingRequests')) localStorage.setItem('pendingRequests', '[]');
+      if (!localStorage.getItem('libraryEntries')) localStorage.setItem('libraryEntries', '[]');
+      ['sasha','badrul'].forEach(u => {
+        if (!localStorage.getItem('jobsheet_status_' + u)) localStorage.setItem('jobsheet_status_' + u, JSON.stringify(new Array(TOTAL_JOBS).fill(false)));
+        if (!localStorage.getItem('jobsheet_submissions_' + u)) localStorage.setItem('jobsheet_submissions_' + u, JSON.stringify(new Array(TOTAL_JOBS).fill(null).map(() => ({ pdf:null, html:null, code:null, dueDate:null }))));
+      });
+    }
+    seed();
+
+      const u = JSON.parse(localStorage.getItem('users') || 'null');
+    if (u && u.admin) { u.admin.name = 'Mohd Shukri Bin Muhamad Husin'; localStorage.setItem('users', JSON.stringify(u)); }
+
+    // ---------- small data helpers (exposed globally) ----------
+    window.CatData = {
+      TOTAL_JOBS,
+      getUsers(){ return JSON.parse(localStorage.getItem('users') || '{}'); },
+      saveUsers(u){ localStorage.setItem('users', JSON.stringify(u)); },
+      getPending(){ return JSON.parse(localStorage.getItem('pendingRequests') || '[]'); },
+      savePending(p){ localStorage.setItem('pendingRequests', JSON.stringify(p)); },
+      getLibrary(){ return JSON.parse(localStorage.getItem('libraryEntries') || '[]'); },
+      saveLibrary(l){ localStorage.setItem('libraryEntries', JSON.stringify(l)); },
+      getStatus(u){ return JSON.parse(localStorage.getItem('jobsheet_status_' + u) || 'null') || new Array(TOTAL_JOBS).fill(false); },
+      saveStatus(u, arr){ localStorage.setItem('jobsheet_status_' + u, JSON.stringify(arr)); },
+      getSubs(u){ return JSON.parse(localStorage.getItem('jobsheet_submissions_' + u) || 'null') || new Array(TOTAL_JOBS).fill(null).map(() => ({ pdf:null, html:null, code:null, dueDate:null })); },
+      saveSubs(u, arr){ localStorage.setItem('jobsheet_submissions_' + u, JSON.stringify(arr)); },
+      getSession(){ return localStorage.getItem('loggedInUser'); },
+      setSession(u){ localStorage.setItem('loggedInUser', u); },
+      clearSession(){ localStorage.removeItem('loggedInUser'); }
+    };
+
+    // ---------- nav auth slot (Login/Register or Hi Name + Dashboard/Logout) ----------
+    function renderAuthSlot(){
+      const slot = document.getElementById('authNavSlot');
+      if (!slot) return;
+      const uname = CatData.getSession();
+      const users = CatData.getUsers();
+      if (uname && users[uname]){
+        const u = users[uname];
+        slot.innerHTML = `
+          <span class="auth-hi">Hi, ${u.name} 👋</span>
+          <a href="dashboard.html" class="auth-link">Dashboard</a>
+          <button type="button" class="auth-link auth-logout" id="logoutBtn">Log out</button>
+        `;
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) logoutBtn.addEventListener('click', () => {
+          CatData.clearSession();
+          window.location.href = 'index.html';
+        });
+      } else {
+        slot.innerHTML = `
+          <a href="login.html" class="auth-link">Log in</a>
+          <a href="register.html" class="auth-link auth-link-primary">Register</a>
+        `;
+      }
+    }
+    document.addEventListener('DOMContentLoaded', renderAuthSlot);
+
+    // ---------- sound: 3+ distinct cat noises, randomly picked ----------
+
+    const SOUND_KEY = 'catSoundEnabled';
+    let soundOn = localStorage.getItem(SOUND_KEY) !== 'off';
+
+const meowAudio = new Audio('meow.mp3');
+meowAudio.preload = 'auto';
+let meowStopTimer = null;
+
+function playMeowSound(){
+  if (!soundOn) return;
+
+  // cancel any pending stop-timer from a previous click
+  if (meowStopTimer) clearTimeout(meowStopTimer);
+
+  meowAudio.pause();
+  meowAudio.currentTime = 0;   // always restart from the beginning
+  meowAudio.play().catch(()=>{});
+
+  // cut playback short so the 21-second file behaves like a quick click sound
+  meowStopTimer = setTimeout(() => {
+    meowAudio.pause();
+    meowAudio.currentTime = 0;
+  }, 1000); // plays only the first 1 second — adjust this number if needed
+}
+
+// keep old function names so nothing else in the code breaks
+function playMeow(){ playMeowSound(); }
+function playMew(){ playMeowSound(); }
+function playScratch(){ playMeowSound(); }
+function playPurr(){ playMeowSound(); }
+function playRandomClickSound(){ playMeowSound(); }
+
+    const clickSounds = [playMeow, playMew, playScratch];
+    function playRandomClickSound(){ if (!soundOn) return; clickSounds[Math.floor(Math.random() * clickSounds.length)](); }
+    window.catPlayMeow = playMeow;
+    window.catPlayMew = playMew;
+    window.catPlayScratch = playScratch;
+    window.catPlayPurr = function(){ if (soundOn) playPurr(); };
+    window.catPlayRandom = playRandomClickSound;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggle = document.getElementById('soundToggle');
+      if (toggle){
+        toggle.textContent = soundOn ? '🔊' : '🔇';
+        toggle.addEventListener('click', () => {
+          soundOn = !soundOn;
+          localStorage.setItem(SOUND_KEY, soundOn ? 'on' : 'off');
+          toggle.textContent = soundOn ? '🔊' : '🔇';
+          if (soundOn) playMew();
+        });
+      }
+    });
+
+    // ---------- click effect: cat pounces on the fish, leaves a scratch mark ----------
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('input, textarea, .sound-toggle')) return;
+      const mark = document.createElement('span');
+      mark.className = 'scratch-mark';
+      mark.innerHTML = '🐾';
+      mark.style.left = (e.clientX - 14) + 'px';
+      mark.style.top = (e.clientY - 14) + 'px';
+      mark.style.setProperty('--rot', (Math.random() * 40 - 20) + 'deg');
+      document.body.appendChild(mark);
+      setTimeout(() => mark.remove(), 900);
+      playRandomClickSound();
+    });
+
+    // ---------- roaming kitten chasing the fish cursor ----------
+    const kitten = document.createElement('div');
+    kitten.id = 'roamKitten';
+    kitten.textContent = '🐈';
+    Object.assign(kitten.style, {
+      position:'fixed', fontSize:'26px', zIndex:35, pointerEvents:'none',
+      left:'70vw', top:'82vh'
+    });
+    document.body.appendChild(kitten);
+    let mx = window.innerWidth * 0.7, my = window.innerHeight * 0.82;
+    let kx = mx, ky = my;
+    window.addEventListener('mousemove', (e) => { mx = e.clientX; my = e.clientY; });
+    window.addEventListener('touchmove', (e) => { if (e.touches[0]){ mx = e.touches[0].clientX; my = e.touches[0].clientY; } }, { passive:true });
+    (function loop(){
+      kx += (mx - kx - 46) * 0.045;
+      ky += (my - ky + 46) * 0.045;
+      kitten.style.left = kx + 'px';
+      kitten.style.top = ky + 'px';
+      requestAnimationFrame(loop);
+    })();
+    document.addEventListener('click', () => {
+      kitten.classList.remove('pounce');
+      void kitten.offsetWidth;
+      kitten.classList.add('pounce');
+    });
+
+    // ---------- loading overlay: two cats chasing a yarn ball around a perfect circle ----------
+    const enter = document.getElementById('pageEnter');
+    if (enter){
+      const ring = document.createElement('div');
+      ring.className = 'paw-ring';
+      const steps = 14;
+      for (let i = 0; i < steps; i++){
+        const ang = (i / steps) * 360;
+        const rad = ang * Math.PI / 180;
+        const r = 78;
+        const x = Math.cos(rad) * r, y = Math.sin(rad) * r;
+        const paw = document.createElement('span');
+        paw.textContent = '🐾';
+        paw.style.transform = `translate(${x}px, ${y}px) rotate(${ang + 90}deg)`;
+        paw.style.animationDelay = (i / steps) * 0.9 + 's';
+        ring.appendChild(paw);
+      }
+      enter.appendChild(ring);
+      setTimeout(() => enter.remove(), 1500);
+    }
+  })();
+</script>
+
+</body>
+</html>
