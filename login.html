@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log In — Cat House Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared-core.css">
+<style>
+  body{
+    display:flex; flex-direction:column; min-height:100vh; position:relative; overflow-x:hidden;
+    background:linear-gradient(120deg, #F7C9DA 0%, #FBF7F1 45%, #DCCFF2 100%);
+  }
+  main{ flex:1; display:flex; align-items:center; justify-content:center; padding:30px 24px; }
+  .login-card{
+    background:#fff; border:2px solid rgba(69,61,87,.14); border-radius:var(--r-lg);
+    padding:36px 32px; width:100%; max-width:420px;
+    box-shadow:0 8px 24px var(--shadow);
+  }
+  .login-card h1{ text-align:center; font-family:var(--font-display); font-weight:800; font-size:28px; margin:0 0 6px; color:var(--ink); }
+  .login-card p{ text-align:center; color:var(--ink-soft); margin:0 0 28px; }
+  .form-group{ margin-bottom:18px; }
+  label{ display:block; font-family:var(--font-display); font-weight:700; font-size:14px; margin-bottom:6px; color:var(--ink); }
+  input{
+    width:100%; padding:12px 14px; border:2px solid rgba(69,61,87,.14);
+    border-radius:var(--r-md); font-size:15px; font-family:var(--font-body);
+    transition:border-color .2s ease; box-sizing:border-box;
+  }
+  input:focus{ outline:none; border-color:var(--coral); }
+  .btn-login{
+    width:100%; padding:12px; border:none; border-radius:var(--r-pill);
+    background:linear-gradient(90deg, var(--coral), var(--sun));
+    color:var(--ink); font-family:var(--font-display); font-weight:700;
+    font-size:16px; cursor:pointer; margin-top:8px;
+    transition:transform .2s ease;
+  }
+  .btn-login:hover{ transform:translateY(-2px); }
+  .hint{ margin-top:20px; text-align:center; font-size:13px; color:var(--ink-soft); }
+  .hint code{ background:var(--cream); padding:2px 8px; border-radius:6px; font-weight:700; }
+  .error{ color:#B44B3F; text-align:center; margin-top:12px; font-weight:600; display:none; }
+</style>
+</head>
+<body>
+<div id="pageEnter" class="page-enter">
+  <div class="loading-orbit">
+    <div class="cat-orbit black"><span>🐈‍⬛</span></div>
+    <div class="cat-orbit orange"><span>🐈</span></div>
+    <div class="yarn">🧶</div>
+  </div>
+</div>
+<nav class="site-nav">
+  <div class="nav-left">
+    <a href="index.html" class="home-btn">🏡 Home</a>
+  </div>
+  <div class="nav-links">
+    <a href="index.html">🏠 Home</a>
+    <a href="about.html">ℹ️ About Us</a>
+    <a href="dashboard.html">📚 Jobsheet</a>
+    <a href="library.html">📖 Library</a>
+  </div>
+  <div class="nav-right">
+    <button type="button" id="soundToggle" class="sound-toggle" title="Toggle meow sound"></button>
+    <span id="authNavSlot"></span>
+  </div>
+</nav>
+<main>
+  <div class="login-card">
+    <h1>🐱 Welcome Back!</h1>
+    <p>Log in to access your dashboard</p>
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" placeholder="Enter username" required autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Enter password" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn-login">🐾 Log In</button>
+      <div id="errorMsg" class="error">❌ Invalid username or password!</div>
+    </form>
+    <div class="hint">
+      Accounts: <code>sasha / sasha</code> · <code>badrul / badrul</code> · <code>admin / admin123</code>
+    </div>
+  </div>
+</main>
+<footer>
+  <div class="stamp"><span class="dot"></span>DFD40143 • Cat House Portal • Sasha & Badrul</div>
+</footer>
+<script src="shared-core.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  const form = document.getElementById('loginForm');
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    const uname = document.getElementById('username').value.trim().toLowerCase();
+    const pwd = document.getElementById('password').value.trim();
+    const users = CatData.getUsers();
+
+    if(users[uname] && users[uname].password === pwd){
+      // ✅ Uses YOUR original method: setSession()
+      CatData.setSession(uname);
+      window.location.href = 'dashboard.html';
+    }else{
+      document.getElementById('errorMsg').style.display = 'block';
+      setTimeout(()=> document.getElementById('errorMsg').style.display = 'none', 3000);
+    }
+  });
+});
+</script>
+</body>
+</html>

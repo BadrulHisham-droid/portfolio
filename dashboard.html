@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Workspace — Cat House Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared-core.css">
+<style>
+  body{
+    display:flex; flex-direction:column; min-height:100vh; position:relative; overflow-x:hidden;
+    background:linear-gradient(120deg, #FBF7F1 0%, #F0F4F0 100%);
+    font-family:'Nunito',sans-serif;
+  }
+  main{ flex:1; padding:30px 24px; max-width:1100px; margin:0 auto; width:100%; }
+
+  /* 👋 WELCOME BANNER */
+  .welcome-banner{
+    background:#fff; border-radius:16px; padding:22px 26px; margin-bottom:24px;
+    box-shadow:0 4px 14px rgba(0,0,0,.05);
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px;
+  }
+  .welcome-left h2{
+    margin:0 0 6px; font-family:'Baloo 2',cursive; font-size:20px; color:#453D57;
+    display:flex; align-items:center; gap:8px;
+  }
+  .welcome-left p{ margin:0; font-size:14px; color:#6c6180; }
+  .role-badge{
+    background:#DCCFF2; color:#453D57; padding:8px 18px; border-radius:20px;
+    font-weight:700; font-size:14px; display:flex; align-items:center; gap:6px;
+  }
+
+  /* 📊 PROGRESS CARDS — 2 Cards */
+  .progress-row{
+    display:grid; grid-template-columns:repeat(2, 1fr); gap:16px; margin-bottom:32px;
+  }
+  .progress-card{
+    background:#fff; border-radius:16px; padding:22px 24px; box-shadow:0 4px 14px rgba(0,0,0,.05);
+  }
+  .progress-num{ font-family:'Baloo 2',cursive; font-size:32px; font-weight:800; color:#453D57; line-height:1; }
+  .progress-label{ font-size:13px; color:#6c6180; margin-top:6px; }
+
+  /* 🔍 SEARCH & FILTER */
+  .controls-bar{
+    background:#fff; border-radius:14px; padding:16px 20px; margin-bottom:24px;
+    box-shadow:0 2px 8px rgba(0,0,0,.04); display:flex; gap:12px; flex-wrap:wrap;
+  }
+  .controls-bar input, .controls-bar select{
+    padding:8px 14px; border:1px solid #eee; border-radius:10px; font-family:inherit; font-size:14px;
+    outline:none; transition:border .2s;
+  }
+  .controls-bar input:focus, .controls-bar select:focus{ border-color:#FFC1B3; }
+  .search-input{ flex:1; min-width:180px; }
+
+  /* 📚 JOBSHEETS GRID */
+  .jobsheets-section h3{
+    font-family:'Baloo 2',cursive; font-size:18px; color:#453D57; margin:0 0 16px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .jobsheets-grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:16px;
+  }
+
+  /* 📄 SINGLE JOBSHEET CARD */
+  .jobsheet-card{
+    background:#fff; border-radius:14px; padding:18px; box-shadow:0 3px 10px rgba(0,0,0,.04);
+    transition:transform .2s, box-shadow .2s;
+  }
+  .jobsheet-card:hover{ transform:translateY(-2px); box-shadow:0 6px 16px rgba(0,0,0,.06); }
+  .js-title{ font-family:'Baloo 2',cursive; font-size:16px; font-weight:700; color:#453D57; margin-bottom:10px; }
+  .js-row{ font-size:13px; margin-bottom:6px; display:flex; align-items:center; gap:6px; }
+  .js-status-dot{ width:10px; height:10px; border-radius:50%; display:inline-block; }
+  .dot-none{ background:#ddd; }
+  .dot-done{ background:#6FCF97; }
+  .dot-pending{ background:#F2C94C; }
+  .js-pdf-none{ color:#999; }
+  .js-pdf-yes{ color:#2E7D5B; font-weight:600; }
+  .js-actions{ margin-top:12px; display:flex; gap:8px; flex-wrap:wrap; }
+  .js-btn{
+    padding:6px 12px; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer;
+    border:none; transition:all .2s; text-decoration:none; display:inline-block; text-align:center;
+  }
+  .js-btn-upload{ background:#BFE9DA; color:#2E7D5B; }
+  .js-btn-upload:hover{ background:#A5E0C8; }
+  .js-btn-view{ background:#DCCFF2; color:#453D57; }
+  .js-btn-view:hover{ background:#C9B8EE; }
+  .js-btn-replace{ background:#FFE9AE; color:#8A6A00; }
+  .js-btn-replace:hover{ background:#FFDF8C; }
+  .js-input-file{ display:none; }
+
+  /* 🔒 NOT LOGGED IN BOX */
+  .empty-box{
+    background:#fff; border-radius:14px; padding:40px; text-align:center;
+    color:#888; box-shadow:0 2px 8px rgba(0,0,0,.04);
+  }
+  .empty-box a{ color:#FF8A65; font-weight:700; text-decoration:none; }
+
+  /* 📋 ADMIN TABLE */
+  .section{ margin-bottom:32px; }
+  .section h3{
+    font-family:'Baloo 2',cursive; font-size:17px; color:#453D57; margin:0 0 14px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .submissions-table{
+    width:100%; border-collapse:collapse; background:#fff; border-radius:14px;
+    overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,.04);
+  }
+  .submissions-table th, .submissions-table td{
+    padding:12px 16px; text-align:left; font-size:14px; border-bottom:1px solid #f0f0f0;
+  }
+  .submissions-table th{
+    background:#F8F8F8; font-weight:700; color:#453D57; font-size:13px;
+  }
+  .status-none{ color:#999; }
+  .status-done{ color:#2E7D5B; font-weight:700; }
+  .admin-delete-btn{
+    background:#FFD4D4; border:none; border-radius:14px; padding:4px 10px;
+    cursor:pointer; font-size:12px; font-weight:700; color:#922C2C;
+    transition:all 0.2s ease;
+  }
+  .admin-delete-btn:hover{ background:#FFBFBF; transform:scale(1.05); }
+
+  /* 📱 RESPONSIVE */
+  @media(max-width:700px){
+    .progress-row{ grid-template-columns:1fr; }
+    .jobsheets-grid{ grid-template-columns:1fr; }
+    .submissions-table th:nth-child(4), .submissions-table td:nth-child(4),
+    .submissions-table th:nth-child(5), .submissions-table td:nth-child(5),
+    .submissions-table th:nth-child(6), .submissions-table td:nth-child(6){ display:none; }
+  }
+  .hidden{ display:none !important; }
+</style>
+</head>
+<body>
+
+<div id="pageEnter" class="page-enter">
+  <div class="loading-orbit">
+    <div class="cat-orbit black"><span>🐈‍⬛</span></div>
+    <div class="cat-orbit orange"><span>🐈</span></div>
+    <div class="yarn">🧶</div>
+  </div>
+</div>
+
+<nav class="site-nav">
+  <div class="nav-left">
+    <a href="index.html" class="home-btn">🏡 Home</a>
+  </div>
+  <div class="nav-links">
+    <a href="index.html">🏠 Home</a>
+    <a href="about.html">ℹ️ About Us</a>
+    <a href="dashboard.html">📚 Jobsheet</a>
+    <a href="library.html">📖 Library</a>
+  </div>
+  <div class="nav-right">
+    <button type="button" id="soundToggle" class="sound-toggle" title="Toggle meow sound"></button>
+    <span id="authNavSlot"></span>
+  </div>
+</nav>
+
+<main>
+  <!-- NOT LOGGED IN -->
+  <div id="loginRequired" class="section">
+    <div class="empty-box">
+      <h3>🔑 Please log in to access your Workspace</h3>
+      <p>You need to be logged in to view and upload your jobsheets.</p>
+      <a href="login.html">Go to Login →</a>
+    </div>
+  </div>
+
+  <!-- 🧑‍🎓 STUDENT WORKSPACE — COMBINED DASHBOARD + JOBSHEETS ✅ -->
+  <div id="studentView" class="hidden">
+    <!-- WELCOME BANNER -->
+    <div class="welcome-banner">
+      <div class="welcome-left">
+        <h2>🐾 Welcome back, <span id="studentName"></span>!</h2>
+        <p>Manage your jobsheets and upload your PDF submissions here.</p>
+      </div>
+      <div class="role-badge">🎓 Student</div>
+    </div>
+
+    <!-- 📊 PROGRESS CARDS -->
+    <div class="progress-row">
+      <div class="progress-card">
+        <div class="progress-num" id="checkedCount">0/24</div>
+        <div class="progress-label">Checked Jobsheets</div>
+      </div>
+      <div class="progress-card">
+        <div class="progress-num" id="filesCount">0/24</div>
+        <div class="progress-label">Jobsheets with PDF</div>
+      </div>
+    </div>
+
+    <!-- 🔍 SEARCH & FILTER -->
+    <div class="controls-bar">
+      <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search jobsheets...">
+      <select id="filterSelect">
+        <option value="all">All Status</option>
+        <option value="done">✅ Completed</option>
+        <option value="pending">⏳ In Progress</option>
+        <option value="none">⭕ Not Started</option>
+      </select>
+    </div>
+
+    <!-- 📚 JOBSHEETS GRID -->
+    <div class="jobsheets-section">
+      <h3>📚 MY JOBSHEETS</h3>
+      <div id="jobsheetsGrid" class="jobsheets-grid"></div>
+    </div>
+  </div>
+
+  <!-- 👑 ADMIN DASHBOARD — SEPARATE & UNCHANGED ✅ -->
+  <div id="adminView" class="hidden">
+    <div class="welcome-banner">
+      <div class="welcome-left">
+        <h2>🐾 Welcome, Mohd Shukri Bin Muhamad Husin!</h2>
+        <p>Approve new members and publish jobsheets to the Library.</p>
+      </div>
+      <div class="role-badge">👑 Admin</div>
+    </div>
+
+    <!-- PENDING REQUESTS -->
+    <div class="section">
+      <h3>📋 Pending Registration Requests</h3>
+      <div id="pendingArea" class="empty-box">🐾 No pending requests right now.</div>
+    </div>
+
+    <!-- ALL STUDENT SUBMISSIONS TABLE -->
+    <div class="section">
+      <h3>📚 All Student Submissions</h3>
+      <table class="submissions-table">
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Jobsheet</th>
+            <th>Due Date</th>
+            <th>Files</th>
+            <th>Library</th>
+            <th style="text-align:center;">Action</th>
+          </tr>
+        </thead>
+        <tbody id="submissionsBody"></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="stamp"><span class="dot"></span>DFD40143 • Cat House Portal • Sasha & Badrul</div>
+</footer>
+
+<script src="shared-core.js"></script>
+<script>
+(function(){
+  const currentUser = CatData.getSession();
+  const users = CatData.getUsers();
+
+  // NOT LOGGED IN
+  if(!currentUser || !users[currentUser]){
+    document.getElementById('loginRequired').classList.remove('hidden');
+    return;
+  }
+
+  const userData = users[currentUser];
+  document.getElementById('loginRequired').classList.add('hidden');
+
+  // ==============================================
+  // 🧑‍🎓 STUDENT WORKSPACE — COMBINED PAGE ✅
+  // ==============================================
+  if(userData.role !== 'admin'){
+    document.getElementById('studentView').classList.remove('hidden');
+    document.getElementById('studentName').textContent = userData.name;
+
+    // Load student data
+    const subs = CatData.getSubs(currentUser);
+    const status = CatData.getStatus(currentUser);
+
+    // Calculate progress — DYNAMIC from localStorage ✅
+    let checkedCount = 0, fileCount = 0;
+    for(let i=0; i<CatData.TOTAL_JOBS; i++){
+      if(status[i]) checkedCount++;
+      if(subs[i] && subs[i].pdf) fileCount++;
+    }
+    document.getElementById('checkedCount').textContent = `${checkedCount}/24`;
+    document.getElementById('filesCount').textContent = `${fileCount}/24`;
+
+    // Render all 24 jobsheets
+    renderJobsheets();
+
+    // Search & Filter
+    document.getElementById('searchInput').addEventListener('input', renderJobsheets);
+    document.getElementById('filterSelect').addEventListener('change', renderJobsheets);
+
+    function renderJobsheets(){
+      const grid = document.getElementById('jobsheetsGrid');
+      const search = document.getElementById('searchInput').value.toLowerCase().trim();
+      const filter = document.getElementById('filterSelect').value;
+      grid.innerHTML = '';
+
+      for(let i=0; i<CatData.TOTAL_JOBS; i++){
+        const num = i + 1;
+        const hasPdf = subs[i] && subs[i].pdf;
+        const isDone = status[i];
+        const fileName = hasPdf ? subs[i].pdf.name : null;
+        const dueDate = hasPdf ? (subs[i].dueDate || '—') : null;
+
+        // Status logic
+        let statusText, statusClass, dotClass;
+        if(isDone){
+          statusText = '✅ Completed'; statusClass = 'done'; dotClass = 'dot-done';
+        } else if(hasPdf){
+          statusText = '⏳ In Progress'; statusClass = 'pending'; dotClass = 'dot-pending';
+        } else {
+          statusText = '⭕ Not Started'; statusClass = 'none'; dotClass = 'dot-none';
+        }
+
+        // Search filter
+        if(search && !`jobsheet ${num}`.includes(search)) continue;
+        // Status filter
+        if(filter !== 'all' && filter !== statusClass) continue;
+
+        // Build card
+        const card = document.createElement('div');
+        card.className = 'jobsheet-card';
+        card.innerHTML = `
+          <div class="js-title">Jobsheet ${num}</div>
+          <div class="js-row"><span class="js-status-dot ${dotClass}"></span> Status: ${statusText}</div>
+          <div class="js-row ${hasPdf?'js-pdf-yes':'js-pdf-none'}">📄 PDF: ${hasPdf?fileName:'No PDF uploaded'}</div>
+          ${dueDate?`<div class="js-row" style="color:#777;">📅 Uploaded: ${dueDate}</div>`:''}
+          <div class="js-actions">
+            <label class="js-btn js-btn-upload" for="file-${i}">
+              ${hasPdf?'📤 Replace PDF':'📤 Upload PDF'}
+            </label>
+            ${hasPdf?`<a href="${subs[i].pdf.data}" download="${fileName}" class="js-btn js-btn-view">📂 View</a>`:''}
+            <input type="file" accept=".pdf" id="file-${i}" class="js-input-file" data-job="${i}">
+          </div>
+        `;
+        grid.appendChild(card);
+      }
+
+      // Attach upload handlers — REUSE existing PDF logic ✅
+      grid.querySelectorAll('.js-input-file').forEach(input => {
+        input.addEventListener('change', e => {
+          const file = e.target.files[0];
+          if(!file) return;
+          const jobIdx = parseInt(e.target.dataset.job);
+          const reader = new FileReader();
+          reader.onload = ev => {
+            subs[jobIdx] = {
+              pdf: { name: file.name, data: ev.target.result, size: file.size },
+              dueDate: new Date().toLocaleString()
+            };
+            CatData.saveSubs(currentUser, subs);
+            // Auto-refresh to update counts & cards
+            setTimeout(()=>location.reload(), 600);
+          };
+          reader.readAsDataURL(file);
+        });
+      });
+    }
+    return;
+  }
+
+  // ==============================================
+  // 👑 ADMIN DASHBOARD — FULLY SEPARATE ✅
+  // ==============================================
+  document.getElementById('adminView').classList.remove('hidden');
+
+  // Pending requests
+  const pending = CatData.getPending();
+  const pendingArea = document.getElementById('pendingArea');
+  if(pending && pending.length > 0){
+    pendingArea.innerHTML = '';
+    pending.forEach((req, idx) => {
+      const div = document.createElement('div');
+      div.style = 'padding:12px; background:#FFF8E1; border-radius:10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;';
+      div.innerHTML = `
+        <div><strong>${req.fullname || req.name}</strong> — @${req.username}</div>
+        <div>
+          <button data-approve="${idx}" style="background:#BFE9DA; border:none; padding:6px 12px; border-radius:20px; cursor:pointer; font-weight:700; margin-right:6px;">✅ Approve</button>
+          <button data-reject="${idx}" style="background:#FFD4D4; border:none; padding:6px 12px; border-radius:20px; cursor:pointer; font-weight:700;">❌ Reject</button>
+        </div>
+      `;
+      pendingArea.appendChild(div);
+    });
+    pendingArea.querySelectorAll('[data-approve]').forEach(btn=>{
+      btn.onclick = () => {
+        const p = CatData.getPending();
+        const u = CatData.getUsers();
+        u[p[btn.dataset.approve].username] = { password:p[btn.dataset.approve].password, role:'student', name:p[btn.dataset.approve].fullname };
+        CatData.saveUsers(u); CatData.savePending(p.filter((_,i)=>i!=btn.dataset.approve)); location.reload();
+      };
+    });
+    pendingArea.querySelectorAll('[data-reject]').forEach(btn=>{
+      btn.onclick = () => {
+        CatData.savePending(CatData.getPending().filter((_,i)=>i!=btn.dataset.reject)); location.reload();
+      };
+    });
+  }
+
+  renderAdminTable();
+
+  function renderAdminTable(){
+    const tbody = document.getElementById('submissionsBody');
+    tbody.innerHTML = '';
+    ['sasha','badrul'].forEach(username => {
+      const sData = users[username];
+      const subs = CatData.getSubs(username);
+      const status = CatData.getStatus(username);
+      for(let i=0; i<CatData.TOTAL_JOBS; i++){
+        const hasFile = subs[i] && subs[i].pdf;
+        if(i===0 || hasFile){
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td><strong>${sData.name}</strong>${i===0?'':' <span style="color:#999;">·</span>'}</td>
+            <td>Jobsheet ${i+1}</td>
+            <td>${hasFile ? (subs[i].dueDate || '—') : '<span class="status-none">—</span>'}</td>
+            <td>${hasFile ? '✅ PDF' : '<span class="status-none">None</span>'}</td>
+            <td>${status[i] ? '<span class="status-done">✅ Published</span>' : '<span class="status-none">Pending</span>'}</td>
+            <td style="text-align:center;">${hasFile ? `<button class="admin-delete-btn" data-user="${username}" data-job="${i}">🗑️ Delete</button>` : ''}</td>
+          `;
+          tbody.appendChild(row);
+        }
+      }
+    });
+    if(tbody.children.length===0) tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#999; padding:20px;">🐾 No submissions from any student yet.</td></tr>`;
+    attachDeleteHandlers();
+  }
+
+  function attachDeleteHandlers(){
+    document.querySelectorAll('.admin-delete-btn').forEach(btn=>{
+      btn.onclick = () => {
+        const u = btn.dataset.user, j = parseInt(btn.dataset.job);
+        const subs = CatData.getSubs(u);
+        const fn = subs[j]?.pdf?.name || 'this file';
+        if(confirm(`🗑️ Delete ${users[u].name} — Jobsheet ${j+1}\nFile: ${fn}`)){
+          subs[j] = { pdf:null, dueDate:null };
+          CatData.saveSubs(u, subs);
+          renderAdminTable();
+        }
+      };
+    });
+  }
+})();
+</script>
+</body>
+</html>

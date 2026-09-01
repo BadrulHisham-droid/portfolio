@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home — The Cat House Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared-core.css">
+<style>
+  body{
+    display:flex; flex-direction:column; min-height:100vh; position:relative; overflow-x:hidden;
+    background:linear-gradient(180deg, #CDEBF4 0%, #F0E8DF 45%, #FBF7F1 100%);
+  }
+  main{ flex:1; padding:30px 24px; display:flex; flex-direction:column; align-items:center; }
+  .hero{ text-align:center; max-width:900px; margin:20px auto 30px; }
+  .cat-house{ font-size:clamp(70px,16vw,110px); line-height:1; margin-bottom:10px; filter:drop-shadow(0 6px 16px rgba(69,61,87,.15)); }
+  .hero h1{ font-family:var(--font-display); font-weight:800; font-size:clamp(28px,6vw,42px); color:var(--ink); margin:0 0 8px; }
+  .hero p{ font-family:var(--font-body); font-size:clamp(15px,3vw,18px); color:var(--ink-soft); max-width:600px; margin:0 auto; line-height:1.6; }
+  .course-tag{ display:inline-block; font-family:var(--font-mono); font-size:13px; color:var(--cocoa); background:#fff; border:2px solid rgba(69,61,87,.14); border-radius:var(--r-pill); padding:6px 14px; margin:14px 0; }
+  .house-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:20px; width:100%; max-width:800px; margin-top:10px; }
+  .room-card{
+    background:#fff; border:2px solid rgba(69,61,87,.14); border-radius:var(--r-lg); padding:22px 20px; text-align:center;
+    box-shadow:0 6px 18px var(--shadow); transition:transform .25s ease, box-shadow .25s ease; text-decoration:none; color:inherit;
+  }
+  .room-card:hover{ transform:translateY(-5px); box-shadow:0 12px 28px var(--shadow-strong); }
+  .room-card .icon{ font-size:40px; margin-bottom:8px; }
+  .room-card h2{ font-family:var(--font-display); font-weight:700; font-size:17px; color:var(--ink); margin:0 0 6px; }
+  .room-card p{ font-size:13.5px; color:var(--ink-soft); margin:0; line-height:1.5; }
+  .room-card.about{ border-top:6px solid var(--mint); }
+  .room-card.jobsheet{ border-top:6px solid var(--sun); }
+  .room-card.library{ border-top:6px solid var(--grape); }
+  .room-card.dashboard{ border-top:6px solid var(--coral); }
+  /* Intro screen clouds */
+  .intro-sky-cloud:nth-child(1){ top:10%; animation-delay:0s; }
+  .intro-sky-cloud:nth-child(2){ top:26%; animation-delay:-10s; font-size:28px; }
+  .intro-sky-cloud:nth-child(3){ top:42%; animation-delay:-20s; font-size:30px; }
+</style>
+</head>
+<body>
+
+<!-- ===================== INTRO SCREEN (only on index.html) ===================== -->
+<div id="catIntro">
+  <span class="intro-sky-cloud">☁️</span>
+  <span class="intro-sky-cloud">☁️</span>
+  <span class="intro-sky-cloud">☁️</span>
+  <button type="button" class="skip-intro" id="skipIntro">Skip →</button>
+  <div class="intro-paw">🐾</div>
+  <div class="intro-house">🏠</div>
+  <h1 class="intro-title">The Cat House Portal</h1>
+  <p class="intro-sub">Welcome to Sasha & Badrul's cozy coursework home</p>
+  <p class="intro-course">DFD40143 • Mobile Application Development</p>
+  <button type="button" class="enter-btn" id="enterBtn">🐈 Enter the Cat House</button>
+</div>
+
+<!-- ===================== PAGE LOADING ORBIT ===================== -->
+<div id="pageEnter" class="page-enter">
+  <div class="loading-orbit">
+    <div class="cat-orbit black"><span>🐈‍⬛</span></div>
+    <div class="cat-orbit orange"><span>🐈</span></div>
+    <div class="yarn">🧶</div>
+  </div>
+</div>
+
+<!-- ===================== NAVIGATION ===================== -->
+<nav class="site-nav">
+  <div class="nav-left">
+    <a href="index.html" class="home-btn">🏡 Home</a>
+  </div>
+  <div class="nav-links">
+    <a href="index.html">🏠 Home</a>
+    <a href="about.html">ℹ️ About Us</a>
+    <a href="dashboard.html">📚 Jobsheet</a>
+    <a href="library.html">📖 Library</a>
+  </div>
+  <div class="nav-right">
+    <button type="button" id="soundToggle" class="sound-toggle" title="Toggle meow sound"></button>
+    <span id="authNavSlot"></span>
+  </div>
+</nav>
+<main>
+  <section class="hero">
+    <div class="cat-house">🏠🐈</div>
+    <h1>Welcome to The Cat House</h1>
+    <p>Your cozy coursework portal for DFD40143 — Mobile Application Development. Explore, track progress, and manage your work — all in one warm place.</p>
+    <span class="course-tag">DFD40143 • Session 2025/26</span>
+  </section>
+
+  <div class="house-grid">
+    <a href="about.html" class="room-card about" data-hover-card>
+      <div class="hover-card">Meet Sasha & Badrul</div>
+      <div class="icon">🛏️</div>
+      <h2>About Us</h2>
+      <p>Who lives in the Cat House</p>
+    </a>
+    <a href="jobsheet.html" class="room-card jobsheet" data-hover-card>
+      <div class="hover-card">24 Jobsheets to complete</div>
+      <div class="icon">📝</div>
+      <h2>Jobsheet</h2>
+      <p>Checklist & progress race</p>
+    </a>
+    <a href="library.html" class="room-card library" data-hover-card>
+      <div class="hover-card">Published coursework</div>
+      <div class="icon">📚</div>
+      <h2>Library</h2>
+      <p>View submitted work</p>
+    </a>
+  </div>
+</main>
+
+<footer>
+  <div class="stamp"><span class="dot"></span>DFD40143 • Cat House Portal • Sasha & Badrul</div>
+</footer>
+
+<script src="shared-core.js"></script>
+<script>
+// Intro screen logic
+(function(){
+  const intro = document.getElementById('catIntro');
+  const enterBtn = document.getElementById('enterBtn');
+  const skipBtn = document.getElementById('skipIntro');
+  const hasSeenIntro = sessionStorage.getItem('catIntroSeen');
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function dismissIntro(){
+    intro.classList.add('hide');
+    sessionStorage.setItem('catIntroSeen', 'yes');
+  }
+
+  if (hasSeenIntro || reduceMotion){
+    intro.style.display = 'none';
+  } else {
+    enterBtn.addEventListener('click', dismissIntro);
+    skipBtn.addEventListener('click', dismissIntro);
+    // Auto-dismiss after 12s if no click
+    setTimeout(dismissIntro, 12000);
+  }
+})();
+</script>
+</body>
+</html>

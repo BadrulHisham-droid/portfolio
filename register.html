@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register — Cat House Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared-core.css">
+<style>
+  body{
+    display:flex; flex-direction:column; min-height:100vh; position:relative; overflow-x:hidden;
+    background:linear-gradient(120deg, #B9E4EA 0%, #FBF7F1 45%, #DCCFF2 100%);
+  }
+  main{ flex:1; display:flex; align-items:center; justify-content:center; padding:40px 24px; }
+  .reg-card{
+    background:#fff; border:2px solid rgba(69,61,87,.16); border-radius:var(--r-lg); padding:34px 28px; width:100%; max-width:420px;
+    box-shadow:0 10px 28px var(--shadow-strong); text-align:center;
+  }
+  .reg-card h1{ font-family:var(--font-display); font-weight:800; font-size:26px; color:var(--ink); margin:0 0 6px; }
+  .reg-card p{ font-size:14px; color:var(--ink-soft); margin:0 0 24px; }
+  .form-group{ text-align:left; margin-bottom:16px; }
+  .form-group label{ display:block; font-family:var(--font-display); font-weight:700; font-size:14px; color:var(--ink); margin-bottom:6px; }
+  .form-group input, .form-group textarea{
+    width:100%; padding:11px 14px; font:inherit; font-size:15px; border:2px solid rgba(69,61,87,.16); border-radius:var(--r-md);
+    background:var(--cream); transition:border-color .2s ease;
+  }
+  .form-group input:focus, .form-group textarea:focus{ outline:none; border-color:var(--mint); }
+  .btn{
+    width:100%; font-family:var(--font-display); font-weight:800; font-size:16px; padding:12px; border:2px solid rgba(69,61,87,.25);
+    border-radius:var(--r-pill); cursor:pointer; transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .btn-primary{ background:var(--mint); color:var(--ink); box-shadow:0 4px 12px var(--shadow); }
+  .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 8px 18px var(--shadow-strong); }
+  .status-msg{ margin-top:14px; font-weight:700; font-size:14px; }
+  .success{ color:#4A9F6E; }
+</style>
+</head>
+<body>
+
+<div id="pageEnter" class="page-enter">
+  <div class="loading-orbit">
+    <div class="cat-orbit black"><span>🐈‍⬛</span></div>
+    <div class="cat-orbit orange"><span>🐈</span></div>
+    <div class="yarn">🧶</div>
+  </div>
+</div>
+
+<nav class="site-nav">
+  <div class="nav-left">
+    <a href="index.html" class="home-btn">🏡 Home</a>
+  </div>
+  <div class="nav-links">
+    <a href="index.html">🏠 Home</a>
+    <a href="about.html">ℹ️ About Us</a>
+    <a href="dashboard.html">📚 Jobsheet</a>
+    <a href="library.html">📖 Library</a>
+  </div>
+  <div class="nav-right">
+    <button type="button" id="soundToggle" class="sound-toggle" title="Toggle meow sound"></button>
+    <span id="authNavSlot"></span>
+  </div>
+</nav>
+
+<main>
+  <div class="reg-card">
+    <h1>Join the Cat House! 🏠</h1>
+    <p>Request access — admin will approve you</p>
+    <form id="regForm">
+      <div class="form-group">
+        <label for="fullname">Full Name</label>
+        <input type="text" id="fullname" required placeholder="e.g. Ahmad Bin Abdullah">
+      </div>
+      <div class="form-group">
+        <label for="username">Username (login name)</label>
+        <input type="text" id="username" required placeholder="e.g. ahmad123">
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" required placeholder="Choose a password">
+      </div>
+      <div class="form-group">
+        <label for="reason">Reason / Student ID</label>
+        <textarea id="reason" rows="3" required placeholder="e.g. Student ID: DFD230001 — taking DFD40143"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">📤 Submit Request</button>
+      <div class="status-msg" id="statusMsg"></div>
+    </form>
+  </div>
+</main>
+
+<footer>
+  <div class="stamp"><span class="dot"></span>DFD40143 • Cat House Portal • Sasha & Badrul</div>
+</footer>
+
+<script src="shared-core.js"></script>
+<script>
+document.getElementById('regForm').addEventListener('submit', e=>{
+  e.preventDefault();
+  const fullname = document.getElementById('fullname').value.trim();
+  const username = document.getElementById('username').value.trim().toLowerCase();
+  const password = document.getElementById('password').value;
+  const reason = document.getElementById('reason').value.trim();
+  const msg = document.getElementById('statusMsg');
+  const users = CatData.getUsers();
+
+  if(users[username]){
+    msg.textContent = '⚠️ Username already exists!';
+    msg.className = 'status-msg';
+    return;
+  }
+
+  const pending = CatData.getPending();
+  pending.push({ username, password, fullname, reason, time:new Date().toLocaleString() });
+  CatData.savePending(pending);
+
+  msg.textContent = '✅ Request submitted! Wait for admin approval.';
+  msg.className = 'status-msg success';
+  e.target.reset();
+});
+</script>
+</body>
+</html>
